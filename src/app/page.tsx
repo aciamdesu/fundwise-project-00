@@ -34,14 +34,12 @@ export default function Home() {
       {/* MOBILE MENU */}
       {menuOpen && (
         <>
-          {/* DARK BACKGROUND (does NOT cover dashboard) */}
           <div
             className="fixed inset-0 z-40 bg-black/40"
             onClick={() => setMenuOpen(false)}
             aria-hidden="true"
           ></div>
 
-          {/* SIDEBAR */}
           <div className="fixed top-0 right-0 h-full w-72 bg-slate-800 p-6 space-y-6 z-50 shadow-lg overflow-y-auto">
             <div className="flex justify-between items-center mb-2">
               <h2 className="text-lg font-semibold">Menu</h2>
@@ -88,39 +86,67 @@ export default function Home() {
         </>
       )}
 
-      {/* MAIN */}
+      {/* MAIN DASHBOARD */}
       <main className="max-w-[1240px] w-full mx-auto px-4 py-6">
         <h2 className="text-2xl md:text-3xl font-bold text-white mb-6">
           Dashboard
         </h2>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          <div className="bg-slate-800 p-5 rounded-xl text-white">
-            <div className="text-xl sm:text-2xl lg:text-3xl">Total Income</div>
-            <div className="text-green-400 font-bold text-2xl sm:text-3xl lg:text-4xl">
-              $0.0
+        <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
+          <div className="bg-slate-800 text-white p-6 rounded-xl">
+            <div className="text-lg md:text-xl font-semibold">Total Income</div>
+            <div className="text-green-400 text-3xl md:text-4xl font-bold mt-2">
+              $0.00
             </div>
           </div>
-
-          <div className="bg-slate-800 p-5 rounded-xl text-white">
-            <div className="text-xl sm:text-2xl lg:text-3xl">
+          <div className="bg-slate-800 text-white p-6 rounded-xl">
+            <div className="text-lg md:text-xl font-semibold">
               Total Expenses
             </div>
-            <div className="text-red-400 font-bold text-2xl sm:text-3xl lg:text-4xl">
-              $0.0
+            <div className="text-red-400 text-3xl md:text-4xl font-bold mt-2">
+              $0.00
             </div>
           </div>
-
-          <div className="bg-slate-800 p-5 rounded-xl text-white">
-            <div className="text-xl sm:text-2xl lg:text-3xl">
+          <div className="bg-slate-800 text-white p-6 rounded-xl">
+            <div className="text-lg md:text-xl font-semibold">
               Current Balance
             </div>
-            <div className="text-blue-400 font-bold text-2xl sm:text-3xl lg:text-4xl">
-              $0.0
+            <div className="text-blue-400 text-3xl md:text-4xl font-bold mt-2">
+              $0.00
             </div>
           </div>
         </div>
       </main>
+
+      {/* FINANCIAL OVERVIEW */}
+      <section className="max-w-[1240px] w-full mx-auto px-4 py-6">
+        <div className="bg-slate-800 text-white p-6 rounded-xl">
+          <div className="text-lg md:text-xl font-semibold">
+            Financial Overview
+          </div>
+        </div>
+      </section>
+
+      {/* BUDGET PROCESS */}
+      <section className="max-w-[1240px] w-full mx-auto px-4 py-6">
+        <div className="bg-slate-800 text-white p-6 rounded-xl">
+          <div className="text-lg md:text-xl font-semibold">Budget Process</div>
+        </div>
+      </section>
+
+      {/* SAVINGS GOALS */}
+      <section className="max-w-[1240px] w-full mx-auto px-4 py-6">
+        <div className="bg-slate-800 text-white p-6 rounded-xl">
+          <div className="text-lg md:text-xl font-semibold">Savings Goals</div>
+        </div>
+      </section>
+
+      {/* TRANSACTIONS */}
+      <section className="max-w-[1240px] w-full mx-auto px-4 py-6">
+        <h2 className="text-2xl md:text-3xl font-bold text-white mb-6">
+          Transactions
+        </h2>
+      </section>
     </>
   );
 }
