@@ -1,17 +1,13 @@
 "use client";
+
 import { useState } from "react";
 import { Search, SlidersHorizontal } from "lucide-react";
+import UserSettingsModal from "./components/UserSettingsModal";
 
 export default function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(false);
   const [searchTransaction, setSearchTransaction] = useState("");
-  const [showSettings, setShowSettings] = useState(false);
-
-  const [fullName, setFullName] = useState("John Doe");
-  const [email, setEmail] = useState("john.doe@example.com");
-  const [darkMode, setDarkMode] = useState(true);
-  const [currency, setCurrency] = useState("USD ($)");
-  const [showBudgetAlert, setShowBudgetAlert] = useState(false);
 
   return (
     <>
@@ -26,8 +22,8 @@ export default function Home() {
               <span className="hidden md:inline">Add Transaction</span>
             </button>
             <button
-              className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center font-bold"
-              onClick={() => setShowSettings(true)}
+              className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center font-medium"
+              onClick={() => setSettingsOpen(true)}
             >
               J
             </button>
@@ -49,7 +45,6 @@ export default function Home() {
           <div
             className="fixed inset-0 z-40 bg-black/40"
             onClick={() => setMenuOpen(false)}
-            aria-hidden="true"
           ></div>
 
           <div className="fixed top-0 right-0 h-full w-72 bg-slate-800 p-6 space-y-6 z-50 shadow-lg overflow-y-auto">
@@ -80,8 +75,8 @@ export default function Home() {
             </button>
 
             <button
-              onClick={() => setShowSettings(true)}
               className="w-full flex items-center gap-2 text-sm text-white hover:text-sky-400"
+              onClick={() => setSettingsOpen(true)}
             >
               <span>👤</span>
               Profile & Settings
@@ -101,6 +96,11 @@ export default function Home() {
         </>
       )}
 
+      {/* Settings Modal */}
+      {settingsOpen && (
+        <UserSettingsModal onClose={() => setSettingsOpen(false)} />
+      )}
+
       {/* Main Dashboard */}
       <main className="max-w-[1240px] w-full mx-auto px-4 py-6">
         <h2 className="text-2xl md:text-3xl font-bold text-white mb-6">
@@ -108,25 +108,23 @@ export default function Home() {
         </h2>
 
         <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
-          <div className="bg-slate-800 text-white p-6 rounded-xl">
-            <div className="text-lg md:text-xl font-semibold">Total Income</div>
-            <div className="text-green-400 text-3xl md:text-4xl font-bold mt-2">
+          <div className="bg-slate-800 text-gray-400 p-6 rounded-xl">
+            <div className="text-lg md:text-xl font-medium">Total Income</div>
+            <div className="text-green-400 text-2xl md:text-2xl sm:text-2xl font-bold mt-2">
               $0.00
             </div>
           </div>
-          <div className="bg-slate-800 text-white p-6 rounded-xl">
-            <div className="text-lg md:text-xl font-semibold">
-              Total Expenses
-            </div>
-            <div className="text-red-400 text-3xl md:text-4xl font-bold mt-2">
+          <div className="bg-slate-800 text-gray-400 p-6 rounded-xl">
+            <div className="text-lg md:text-xl font-medium">Total Expenses</div>
+            <div className="text-red-400 text-2xl md:text-2xl sm:text-2xl font-bold mt-2">
               $0.00
             </div>
           </div>
-          <div className="bg-slate-800 text-white p-6 rounded-xl">
-            <div className="text-lg md:text-xl font-semibold">
+          <div className="bg-slate-800 text-gray-400 p-6 rounded-xl">
+            <div className="text-lg md:text-xl font-medium">
               Current Balance
             </div>
-            <div className="text-blue-400 text-3xl md:text-4xl font-bold mt-2">
+            <div className="text-blue-400 text-2xl md:text-2xl sm:text-2xl font-bold mt-2">
               $0.00
             </div>
           </div>
@@ -142,10 +140,12 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Budget Process */}
+      {/* Budget Progress */}
       <section className="max-w-[1240px] w-full mx-auto px-4 py-6">
         <div className="bg-slate-800 text-white p-6 rounded-xl">
-          <div className="text-lg md:text-xl font-semibold">Budget Process</div>
+          <div className="text-lg md:text-xl font-semibold">
+            Budget Progress
+          </div>
         </div>
       </section>
 
@@ -174,7 +174,7 @@ export default function Home() {
                 value={searchTransaction}
                 onChange={(e) => setSearchTransaction(e.target.value)}
                 placeholder="Search Transaction"
-                className="pl-10 pr-4 py-2 rounded-md w-full text-white focus:outline-none focus:ring-0 focus:border-transparent bg-slate-700"
+                className="pl-10 pr-4 py-2 rounded-md w-full text-white bg-slate-700 focus:outline-none"
               />
             </div>
 
@@ -195,144 +195,6 @@ export default function Home() {
           </div>
         </div>
       </section>
-
-      {/* Settings Modal */}
-      {showSettings && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-          <div className="bg-slate-800 w-full max-w-5xl rounded-xl shadow-lg flex flex-col md:flex-row overflow-hidden">
-            {/* Sidebar */}
-            <aside className="md:w-1/3 w-full bg-slate-700 p-6 space-y-4">
-              <div className="flex justify-between items-center mb-2">
-                <h2 className="text-xl font-bold text-white">
-                  User Profile & Settings
-                </h2>
-                <button
-                  onClick={() => setShowSettings(false)}
-                  className="text-white text-xl md:hidden"
-                >
-                  ✕
-                </button>
-              </div>
-              <ul className="space-y-2">
-                <li className="text-white font-medium bg-blue-600 p-2 rounded">
-                  Profile
-                </li>
-                <li className="text-gray-300 hover:text-white cursor-pointer">
-                  Budget Limits
-                </li>
-                <li className="text-gray-300 hover:text-white cursor-pointer">
-                  Recurring
-                </li>
-                <li className="text-gray-300 hover:text-white cursor-pointer">
-                  Accounts
-                </li>
-                <li className="text-gray-300 hover:text-white cursor-pointer">
-                  Savings Goals
-                </li>
-                <li className="text-gray-300 hover:text-white cursor-pointer">
-                  Export Data
-                </li>
-              </ul>
-
-              <div className="mt-10 pt-4 border-t border-slate-600 flex items-center gap-3">
-                <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold">
-                  J
-                </div>
-                <div>
-                  <div className="text-white font-medium">{fullName}</div>
-                  <div className="text-sm text-gray-400">{email}</div>
-                </div>
-              </div>
-            </aside>
-
-            {/* Form */}
-            <div className="md:w-2/3 w-full p-6 text-white space-y-6">
-              <div className="flex justify-end md:block">
-                <button
-                  onClick={() => setShowSettings(false)}
-                  className="hidden md:inline text-white text-xl mb-4"
-                >
-                  ✕
-                </button>
-              </div>
-              <div>
-                <h3 className="font-bold text-lg mb-2">
-                  Personal Information & Preferences
-                </h3>
-                <div className="grid md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm mb-1">Full Name</label>
-                    <input
-                      type="text"
-                      value={fullName}
-                      onChange={(e) => setFullName(e.target.value)}
-                      className="w-full px-3 py-2 rounded bg-slate-700 border border-slate-600 text-white"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm mb-1">Email Address</label>
-                    <input
-                      type="email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      className="w-full px-3 py-2 rounded bg-slate-700 border border-slate-600 text-white"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              <div>
-                <h4 className="font-semibold text-md mb-2">
-                  Application Preferences
-                </h4>
-                <div className="flex flex-col gap-4">
-                  <div className="flex items-center gap-2">
-                    <input
-                      type="checkbox"
-                      checked={darkMode}
-                      onChange={() => setDarkMode(!darkMode)}
-                      className="accent-blue-500"
-                    />
-                    <label>Dark Mode</label>
-                  </div>
-                  <div>
-                    <label className="text-sm mb-1">Preferred Currency</label>
-                    <select
-                      value={currency}
-                      onChange={(e) => setCurrency(e.target.value)}
-                      className="w-full px-3 py-2 rounded bg-slate-700 border border-slate-600 text-white"
-                    >
-                      <option>USD ($)</option>
-                      <option>PHP (₱)</option>
-                      <option>EUR (€)</option>
-                    </select>
-                    <span className="text-xs text-gray-400 mt-1">
-                      This will be used for all monetary values.
-                    </span>
-                  </div>
-                  <div>
-                    <label className="flex items-center gap-2">
-                      <input
-                        type="checkbox"
-                        checked={showBudgetAlert}
-                        onChange={() => setShowBudgetAlert(!showBudgetAlert)}
-                        className="accent-blue-500"
-                      />
-                      Show budget alerts when approaching limits
-                    </label>
-                  </div>
-                </div>
-              </div>
-
-              <div className="text-right">
-                <button className="bg-blue-600 hover:bg-blue-700 px-6 py-2 rounded text-white font-medium">
-                  Save Changes
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
     </>
   );
 }
