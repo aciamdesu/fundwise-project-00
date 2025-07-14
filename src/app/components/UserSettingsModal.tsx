@@ -1,4 +1,5 @@
 "use client";
+
 import { useState } from "react";
 import { X } from "lucide-react";
 
@@ -290,7 +291,6 @@ export default function UserSettingsModal({ onClose }: Props) {
               </div>
 
               <div className="bg-slate-700 rounded-lg p-4 space-y-4">
-                {/* Single Goal */}
                 <div className="bg-slate-800 p-4 rounded-lg space-y-3">
                   <div className="flex justify-between items-center">
                     <h4 className="font-semibold text-white">Emergency Fund</h4>
@@ -318,9 +318,7 @@ export default function UserSettingsModal({ onClose }: Props) {
             <div className="space-y-6">
               <h3 className="text-lg font-bold">Export Your Data</h3>
 
-              {/* Export Cards Grid */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {/* Transactions */}
                 <div className="bg-slate-700 p-4 rounded-xl shadow space-y-3">
                   <h4 className="text-white font-semibold">Transactions</h4>
                   <p className="text-sm text-gray-300">
@@ -332,7 +330,6 @@ export default function UserSettingsModal({ onClose }: Props) {
                   </button>
                 </div>
 
-                {/* Accounts */}
                 <div className="bg-slate-700 p-4 rounded-xl shadow space-y-3">
                   <h4 className="text-white font-semibold">Accounts</h4>
                   <p className="text-sm text-gray-300">
@@ -343,7 +340,6 @@ export default function UserSettingsModal({ onClose }: Props) {
                   </button>
                 </div>
 
-                {/* Budget Limits */}
                 <div className="bg-slate-700 p-4 rounded-xl shadow space-y-3">
                   <h4 className="text-white font-semibold">Budget Limits</h4>
                   <p className="text-sm text-gray-300">
@@ -354,7 +350,6 @@ export default function UserSettingsModal({ onClose }: Props) {
                   </button>
                 </div>
 
-                {/* All Data (JSON) */}
                 <div className="bg-slate-700 p-4 rounded-xl shadow space-y-3">
                   <h4 className="text-white font-semibold">All Data (JSON)</h4>
                   <p className="text-sm text-gray-300">
@@ -367,7 +362,6 @@ export default function UserSettingsModal({ onClose }: Props) {
                 </div>
               </div>
 
-              {/* Privacy Note (Full Width) */}
               <div className="bg-slate-700 p-4 rounded-xl shadow space-y-2">
                 <h4 className="text-white font-semibold">Privacy Note</h4>
                 <p className="text-sm text-gray-300">

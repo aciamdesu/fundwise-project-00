@@ -1,13 +1,24 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Search, SlidersHorizontal } from "lucide-react";
 import UserSettingsModal from "./components/UserSettingsModal";
+import AddTransactionModal from "./components/AddTransactionModal";
 
 export default function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [AddTransactionOpen, setAddTransactionOpen] = useState(false);
   const [searchTransaction, setSearchTransaction] = useState("");
+  const [isDarkMode, setIsDarkMode] = useState(true);
+
+  useEffect(() => {
+    if (isDarkMode) {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+  }, [isDarkMode]);
 
   return (
     <>
@@ -17,10 +28,14 @@ export default function Home() {
           <h1 className="text-xl font-semibold">Fundwise</h1>
 
           <div className="hidden md:flex items-center space-x-6">
-            <button className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-xl text-sm text-white flex items-center gap-2">
+            <button
+              onClick={() => setAddTransactionOpen(true)}
+              className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-xl text-sm text-white flex items-center gap-2"
+            >
               <span className="text-xl">+</span>
               <span className="hidden md:inline">Add Transaction</span>
             </button>
+
             <button
               className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center font-medium"
               onClick={() => setSettingsOpen(true)}
@@ -69,7 +84,10 @@ export default function Home() {
               </div>
             </div>
 
-            <button className="w-full bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-xl text-sm text-white flex items-center gap-2">
+            <button
+              onClick={() => setAddTransactionOpen(true)}
+              className="w-full bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-xl text-sm text-white flex items-center gap-2"
+            >
               <span className="text-xl">+</span>
               Add Transaction
             </button>
@@ -84,10 +102,16 @@ export default function Home() {
 
             <div className="flex items-center justify-between text-sm text-white">
               <div className="flex items-center gap-2">
-                <span>🌞</span> Light Mode
+                <span>{isDarkMode ? "🌞" : "🌙"}</span>{" "}
+                {isDarkMode ? "Light Mode" : "Dark Mode"}
               </div>
               <label className="relative inline-flex items-center cursor-pointer">
-                <input type="checkbox" className="sr-only peer" />
+                <input
+                  type="checkbox"
+                  className="sr-only peer"
+                  checked={isDarkMode}
+                  onChange={() => setIsDarkMode(!isDarkMode)}
+                />
                 <div className="w-11 h-6 bg-gray-600 rounded-full peer-checked:bg-sky-500 transition-all"></div>
                 <div className="absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-all peer-checked:translate-x-full"></div>
               </label>
@@ -99,6 +123,11 @@ export default function Home() {
       {/* Settings Modal */}
       {settingsOpen && (
         <UserSettingsModal onClose={() => setSettingsOpen(false)} />
+      )}
+
+      {/* Add Transaction Modal */}
+      {AddTransactionOpen && (
+        <AddTransactionModal onClose={() => setAddTransactionOpen(false)} />
       )}
 
       {/* Main Dashboard */}
