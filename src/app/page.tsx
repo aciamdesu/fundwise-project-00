@@ -2,8 +2,11 @@
 
 import { useEffect, useState } from "react";
 import { Search, SlidersHorizontal } from "lucide-react";
-import UserSettingsModal from "./components/UserSettingsModal";
-import AddTransactionModal from "./components/AddTransactionModal";
+import UserSettingsModal from "./components/usersettingsmodal";
+import AddTransactionModal from "./components/addtransactionmodal";
+import FinancialOverview from "./components/financialoverview";
+import BudgetProgress from "./components/budgetprogress";
+import SavingsGoals from "./components/savingsgoals";
 
 export default function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -11,6 +14,7 @@ export default function Home() {
   const [AddTransactionOpen, setAddTransactionOpen] = useState(false);
   const [searchTransaction, setSearchTransaction] = useState("");
   const [isDarkMode, setIsDarkMode] = useState(true);
+  const [showFilters, setShowFilters] = useState(false);
 
   useEffect(() => {
     if (isDarkMode) {
@@ -165,6 +169,7 @@ export default function Home() {
         <div className="bg-slate-800 text-white p-6 rounded-xl">
           <div className="text-lg md:text-xl font-semibold">
             Financial Overview
+            <FinancialOverview />
           </div>
         </div>
       </section>
@@ -174,6 +179,7 @@ export default function Home() {
         <div className="bg-slate-800 text-white p-6 rounded-xl">
           <div className="text-lg md:text-xl font-semibold">
             Budget Progress
+            <BudgetProgress />
           </div>
         </div>
       </section>
@@ -181,7 +187,10 @@ export default function Home() {
       {/* Savings Goals */}
       <section className="max-w-[1240px] w-full mx-auto px-4 py-6">
         <div className="bg-slate-800 text-white p-6 rounded-xl">
-          <div className="text-lg md:text-xl font-semibold">Savings Goals</div>
+          <div className="text-lg md:text-xl font-semibold">
+            Savings Goals
+            <SavingsGoals />
+          </div>
         </div>
       </section>
 
@@ -207,11 +216,36 @@ export default function Home() {
               />
             </div>
 
-            <button className="flex items-center gap-2 px-3 py-2 bg-slate-700 hover:bg-slate-600 rounded-md text-white text-sm">
+            <button
+              onClick={() => setShowFilters(!showFilters)}
+              className="flex items-center gap-2 px-3 py-2 bg-slate-700 hover:bg-slate-600 rounded-md text-white text-sm"
+            >
               <SlidersHorizontal size={18} />
               <span className="hidden sm:inline">Filter</span>
             </button>
           </div>
+
+          {showFilters && (
+            <div className="mt-4 grid grid-cols-1 md:grid-cols-3 gap-3">
+              <select className="w-full bg-slate-700 text-white px-3 py-2 rounded-md text-sm">
+                <option>All Types</option>
+                <option>Income</option>
+                <option>Expenses</option>
+              </select>
+              <select className="w-full bg-slate-700 text-white px-3 py-2 rounded-md text-sm">
+                <option>All Categories</option>
+                <option>Food</option>
+                <option>Rent</option>
+                <option>Subscription</option>
+              </select>
+              <select className="w-full bg-slate-700 text-white px-3 py-2 rounded-md text-sm">
+                <option>Date (Newest First)</option>
+                <option>Date (Oldest First)</option>
+                <option>Amount (Highest First)</option>
+                <option>Amount (Lowest First)</option>
+              </select>
+            </div>
+          )}
 
           <div className="mt-4">
             {searchTransaction === "" ? (
