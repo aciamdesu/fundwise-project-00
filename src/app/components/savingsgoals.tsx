@@ -18,19 +18,19 @@ const goals: Goal[] = [
 
 export default function SavingsGoals() {
   return (
-    <div className="bg-slate-800 rounded-xl p-4 space-y-4">
+    <div className="bg-slate-800 rounded-xl mt-4 space-y-4">
       {goals.map((goal, idx) => {
         const percent = Math.min((goal.saved / goal.target) * 100, 100);
         return (
           <div key={idx}>
-            <div className="text-xs text-gray-300 mb-1">{goal.label}</div>
+            <div className="text-sm text-gray-300 mb-1">{goal.label}</div>
             <div className="w-full bg-slate-700 h-3 rounded-full overflow-hidden">
               <div
                 className="h-full bg-blue-500 transition-all"
                 style={{ width: `${percent}%` }}
               ></div>
             </div>
-            <div className="text-xs text-gray-400 mt-1">
+            <div className="text-sm text-gray-400 mt-1">
               ${goal.saved} / ${goal.target} — {goal.daysLeft} days left to
               reach goal
             </div>
