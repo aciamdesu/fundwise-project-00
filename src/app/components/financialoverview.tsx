@@ -21,7 +21,7 @@ export default function FinancialOverviewChart() {
         <BarChart data={data}>
           <XAxis dataKey="name" />
           <YAxis />
-          <Tooltip />
+          <Tooltip cursor={{ fill: "transparent" }} />
           <Bar dataKey="income" fill="#4ade80" />
           <Bar dataKey="expenses" fill="#f87171" />
         </BarChart>
