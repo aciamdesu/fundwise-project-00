@@ -1,8 +1,8 @@
 "use client";
 
 type BudgetItem = {
-  category: string;
-  spent: number;
+  name: string;
+  used: number;
   limit: number;
 };
 

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { X } from "lucide-react";
+import { Pencil, Trash2, X } from "lucide-react";
 
 type Props = {
   onClose: () => void;
@@ -9,6 +9,21 @@ type Props = {
 
 export default function UserSettingsModal({ onClose }: Props) {
   const [activeTab, setActiveTab] = useState("profile");
+  const [editItem, setEditItem] = useState<BudgetItem | null>(null);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [budgetLimits, setBudgetLimits] = useState([
+    { name: "Food", used: 50, limit: 500 },
+  ]);
+  const handleDelete = (name: string) => {
+    setBudgetLimits((prev) => prev.filter((item) => item.name !== name));
+  };
+  const handleEdit = (item) => {
+    setEditItem(item);
+    setShowEditModal(true);
+  };
+  const handleUpdate = () => {
+    setShowEditModal(false);
+  };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
@@ -140,7 +155,7 @@ export default function UserSettingsModal({ onClose }: Props) {
               </div>
 
               <div className="space-y-4">
-                {[{ name: "Food", used: 50, limit: 500 }].map((item) => {
+                {budgetLimits.map((item) => {
                   const percent = Math.round((item.used / item.limit) * 100);
                   return (
                     <div
@@ -149,11 +164,25 @@ export default function UserSettingsModal({ onClose }: Props) {
                     >
                       <div className="flex justify-between items-center">
                         <h4 className="font-semibold">{item.name}</h4>
-                        <div className="flex gap-2 text-sm text-gray-300 items-center">
+                        <div className="flex items-center gap-4 text-sm text-gray-300">
                           <span>
                             ${item.used.toFixed(2)} of ${item.limit.toFixed(2)}
                           </span>
                           <span>{percent}%</span>
+                          <div className="flex gap-2">
+                            <button onClick={() => handleEdit(item)}>
+                              <Pencil
+                                size={16}
+                                className="text-blue-400 hover:text-blue-500"
+                              />
+                            </button>
+                            <button onClick={() => handleDelete(item.name)}>
+                              <Trash2
+                                size={16}
+                                className="text-red-400 hover:text-red-500"
+                              />
+                            </button>
+                          </div>
                         </div>
                       </div>
                       <div className="w-full h-2 bg-slate-600 rounded">
@@ -166,6 +195,49 @@ export default function UserSettingsModal({ onClose }: Props) {
                   );
                 })}
               </div>
+
+              {/* Edit Modal */}
+              {showEditModal && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+                  <div className="bg-white dark:bg-slate-800 text-black dark:text-white p-6 rounded-xl w-full max-w-md shadow-lg relative">
+                    <h3 className="text-lg font-bold mb-4">
+                      Edit Budget Limit
+                    </h3>
+
+                    {/* Form fields */}
+                    <input
+                      type="text"
+                      placeholder="Budget name"
+                      className="w-full px-3 py-2 rounded bg-slate-200 dark:bg-slate-700 mb-4"
+                    />
+                    <input
+                      type="number"
+                      placeholder="Limit"
+                      className="w-full px-3 py-2 rounded bg-slate-200 dark:bg-slate-700 mb-4"
+                    />
+
+                    <div className="flex justify-end gap-2">
+                      <button
+                        onClick={() => setShowEditModal(false)}
+                        className="bg-gray-300 dark:bg-gray-700 text-black dark:text-white px-4 py-2 rounded"
+                      >
+                        Cancel
+                      </button>
+                      <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">
+                        Save
+                      </button>
+                    </div>
+
+                    {/* Close button */}
+                    <button
+                      onClick={() => setShowEditModal(false)}
+                      className="absolute top-3 right-3 text-gray-400 hover:text-white"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                </div>
+              )}
             </>
           )}
 
