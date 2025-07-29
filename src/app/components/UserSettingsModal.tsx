@@ -15,6 +15,14 @@ export default function UserSettingsModal({ onClose }: Props) {
   const [newCategory, setNewCategory] = useState("");
   const [newLimit, setNewLimit] = useState<number | "">("");
   const [newPeriod, setNewPeriod] = useState("monthly");
+  const [showRecurringModal, setShowRecurringModal] = useState(false);
+  const [description, setDescription] = useState("");
+  const [type, setType] = useState("expense");
+  const [frequency, setFrequency] = useState("monthly");
+  const [active, setActive] = useState("true");
+  const [amount, setAmount] = useState<number | "">("");
+  const [category, setCategory] = useState("income");
+  const [startDate, setStartDate] = useState("");
   const [budgetLimits, setBudgetLimits] = useState([
     { name: "Food", used: 50, limit: 500 },
   ]);
@@ -383,7 +391,10 @@ export default function UserSettingsModal({ onClose }: Props) {
             <>
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-lg font-bold">Recurring Transactions</h3>
-                <button className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded text-white text-sm">
+                <button
+                  onClick={() => setShowRecurringModal(true)}
+                  className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded text-white text-sm"
+                >
                   + Add Recurring
                 </button>
               </div>
@@ -428,6 +439,131 @@ export default function UserSettingsModal({ onClose }: Props) {
                   </tbody>
                 </table>
               </div>
+
+              {/* Add Recurring Modal */}
+              {showRecurringModal && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+                  <div className="bg-white dark:bg-slate-800 text-black dark:text-white p-6 rounded-xl w-full max-w-3xl shadow-lg relative">
+                    <h3 className="text-lg font-bold mb-6">
+                      Add Recurring Transaction
+                    </h3>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      {/* Left Column */}
+                      <div className="space-y-4">
+                        <input
+                          type="text"
+                          placeholder="Description"
+                          value={description}
+                          onChange={(e) => setDescription(e.target.value)}
+                          className="w-full px-3 py-2 rounded bg-slate-200 dark:bg-slate-700"
+                        />
+
+                        <select
+                          value={type}
+                          onChange={(e) => setType(e.target.value)}
+                          className="w-full px-3 py-2 rounded bg-slate-200 dark:bg-slate-700"
+                        >
+                          <option value="income">Income</option>
+                          <option value="expense">Expense</option>
+                        </select>
+
+                        <select
+                          value={frequency}
+                          onChange={(e) => setFrequency(e.target.value)}
+                          className="w-full px-3 py-2 rounded bg-slate-200 dark:bg-slate-700"
+                        >
+                          <option value="daily">Daily</option>
+                          <option value="weekly">Weekly</option>
+                          <option value="monthly">Monthly</option>
+                          <option value="yearly">Yearly</option>
+                        </select>
+
+                        <label className="flex items-center gap-2 text-sm">
+                          <input
+                            type="checkbox"
+                            checked={active}
+                            onChange={(e) => setActive(e.target.checked)}
+                          />
+                          Active
+                        </label>
+                      </div>
+
+                      {/* Right Column */}
+                      <div className="space-y-4">
+                        <input
+                          type="number"
+                          placeholder="Amount"
+                          value={amount}
+                          onChange={(e) => setAmount(Number(e.target.value))}
+                          className="w-full px-3 py-2 rounded bg-slate-200 dark:bg-slate-700"
+                        />
+
+                        <select
+                          value={category}
+                          onChange={(e) => setCategory(e.target.value)}
+                          className="w-full px-3 py-2 rounded bg-slate-200 dark:bg-slate-700"
+                        >
+                          <option value="income">Income</option>
+                          <option value="housing">Housing</option>
+                          <option value="food">Food</option>
+                          <option value="transportation">Transportation</option>
+                          <option value="entertainment">Entertainment</option>
+                        </select>
+
+                        <input
+                          type="date"
+                          value={startDate}
+                          onChange={(e) => setStartDate(e.target.value)}
+                          className="w-full px-3 py-2 rounded bg-slate-200 dark:bg-slate-700"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="flex justify-end gap-2 mt-6">
+                      <button
+                        onClick={() => setShowRecurringModal(false)}
+                        className="bg-gray-300 dark:bg-gray-700 text-black dark:text-white px-4 py-2 rounded"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        onClick={() => {
+                          if (!description || amount === "" || !startDate)
+                            return;
+                          console.log({
+                            description,
+                            type,
+                            frequency,
+                            active,
+                            amount,
+                            category,
+                            startDate,
+                          });
+                          setShowRecurringModal(false);
+                          setDescription("");
+                          setType("expense");
+                          setFrequency("monthly");
+                          setActive(true);
+                          setAmount("");
+                          setCategory("income");
+                          setStartDate("");
+                        }}
+                        className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
+                      >
+                        Add Recurring
+                      </button>
+                    </div>
+
+                    <button
+                      onClick={() => setShowRecurringModal(false)}
+                      className="absolute top-3 right-3 text-gray-400 hover:text-white"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                </div>
+              )}
             </>
           )}
 
