@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { use, useState } from "react";
 import { Pencil, Trash2, X } from "lucide-react";
 
 type Props = {
@@ -27,6 +27,11 @@ export default function UserSettingsModal({ onClose }: Props) {
   const [accountName, setAccountName] = useState("");
   const [accountType, setAccountType] = useState("checking");
   const [accountBalance, setAccountBalance] = useState<number | "">("");
+  const [showSavingsModal, setShowSavingModal] = useState(false);
+  const [goalName, setGoalName] = useState("");
+  const [targetDate, setTargetDate] = useState("");
+  const [targetAmount, setTargetAmount] = useState<number | "">("");
+  const [currentAmountSaved, setCurrentAmountSaved] = useState<number | "">("");
   const [budgetLimits, setBudgetLimits] = useState([
     { name: "Food", used: 50, limit: 500 },
   ]);
@@ -651,7 +656,10 @@ export default function UserSettingsModal({ onClose }: Props) {
             <>
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-lg font-bold">Savings Goals</h3>
-                <button className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded text-white text-sm">
+                <button
+                  onClick={() => setShowSavingModal(true)}
+                  className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded text-white text-sm"
+                >
                   + Add Goal
                 </button>
               </div>
@@ -677,6 +685,94 @@ export default function UserSettingsModal({ onClose }: Props) {
                   </div>
                 </div>
               </div>
+
+              {showSavingsModal && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+                  <div className="bg-white dark:bg-slate-800 text-black dark:text-white p-6 rounded-xl w-full max-w-md shadow-lg relative">
+                    <h3 className="text-lg font-bold mb-4">
+                      Add Savings Goals
+                    </h3>
+
+                    <div className="space-y-4">
+                      <input
+                        type="text"
+                        placeholder="Goal Name"
+                        value={goalName}
+                        onChange={(e) => setGoalName(e.target.value)}
+                        className="w-full px-3 py-2 rounded bg-slate-200 dark:bg-slate-700"
+                      />
+
+                      <input
+                        type="date"
+                        value={targetDate}
+                        onChange={(e) => setTargetDate(e.target.value)}
+                        className="w-full px-3 py-2 rounded bg-slate-200 dark:bg-slate-700"
+                      />
+
+                      <input
+                        type="number"
+                        placeholder="Target Amount"
+                        value={targetAmount}
+                        onChange={(e) =>
+                          setTargetAmount(Number(e.target.value))
+                        }
+                        className="w-full px-3 py-2 rounded bg-slate-200 dark:bg-slate-700"
+                      />
+
+                      <input
+                        type="number"
+                        placeholder="Current Amount Saved"
+                        value={currentAmountSaved}
+                        onChange={(e) =>
+                          setCurrentAmountSaved(Number(e.target.value))
+                        }
+                        className="w-full px-3 py-2 rounded bg-slate-200 dark:bg-slate-700"
+                      />
+                    </div>
+
+                    <div className="flex justify-end gap-2 mt-6">
+                      <button
+                        onClick={() => setShowSavingModal(false)}
+                        className="bg-gray-300 dark:bg-gray-700 text-black dark:text-white px-4 py-2 rounded"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        onClick={() => {
+                          if (
+                            !goalName ||
+                            targetAmount === "" ||
+                            currentAmountSaved === "" ||
+                            !targetDate
+                          )
+                            return;
+                          console.log({
+                            goalName,
+                            targetDate,
+                            targetAmount,
+                            currentAmountSaved,
+                          });
+                          setShowSavingModal(false);
+                          setGoalName("");
+                          setTargetDate("");
+                          setTargetAmount("");
+                          setCurrentAmountSaved("");
+                        }}
+                        className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
+                      >
+                        Add Goal
+                      </button>
+                    </div>
+
+                    <button
+                      onClick={() => setShowSavingModal(false)}
+                      className="absolute top-3 right-3 text-gray-400 hover:text-white"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                </div>
+              )}
             </>
           )}
 
