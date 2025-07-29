@@ -11,6 +11,10 @@ export default function UserSettingsModal({ onClose }: Props) {
   const [activeTab, setActiveTab] = useState("profile");
   const [editItem, setEditItem] = useState<BudgetItem | null>(null);
   const [showEditModal, setShowEditModal] = useState(false);
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [newCategory, setNewCategory] = useState("");
+  const [newLimit, setNewLimit] = useState<number | "">("");
+  const [newPeriod, setNewPeriod] = useState("monthly");
   const [budgetLimits, setBudgetLimits] = useState([
     { name: "Food", used: 50, limit: 500 },
   ]);
@@ -149,7 +153,10 @@ export default function UserSettingsModal({ onClose }: Props) {
             <>
               <div className="flex justify-between items-center mb-4">
                 <h3 className="font-bold text-lg">Budget Limits</h3>
-                <button className="bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded text-sm text-white">
+                <button
+                  onClick={() => setShowAddModal(true)}
+                  className="bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded text-sm text-white"
+                >
                   + Add Limit
                 </button>
               </div>
@@ -231,6 +238,78 @@ export default function UserSettingsModal({ onClose }: Props) {
                     {/* Close button */}
                     <button
                       onClick={() => setShowEditModal(false)}
+                      className="absolute top-3 right-3 text-gray-400 hover:text-white"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {showAddModal && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+                  <div className="bg-white dark:bg-slate-800 text-black dark:text-white p-6 rounded-xl w-full max-w-md shadow-lg relative">
+                    <h3 className="text-lgfont-bold mb-4">Add Budget Limit</h3>
+
+                    {/* Category */}
+                    <input
+                      type="text"
+                      placeholder="Category"
+                      value={newCategory}
+                      onChange={(e) => setNewCategory(e.target.value)}
+                      className="w-full px-3 py-2 rounded bg-slate-200 dark:bg-slate-700 mb-4"
+                    />
+
+                    {/* Limit */}
+                    <input
+                      type="number"
+                      placeholder="Limit Amount"
+                      value={newLimit}
+                      onChange={(e) => setNewLimit(Number(e.target.value))}
+                      className="w-full px-3 py-2 rounded bg-slate-200 dark:bg-slate-700 mb-4"
+                    />
+
+                    {/* Period Dropdown */}
+                    <select
+                      value={newPeriod}
+                      onChange={(e) => setNewPeriod(e.target.value)}
+                      className="w-full px-3 py-2 rounded bg-slate-200 dark:bg-slate-700 mb-4"
+                    >
+                      <option value="monthly">Monthly</option>
+                      <option value="yearly">Yearly</option>
+                    </select>
+
+                    {/* Buttons */}
+                    <div className="flex justify-end gap-2">
+                      <button
+                        onClick={() => setShowAddModal(false)}
+                        className="bg-gray-300 dark:bg-gray-700 text-black dark:text-white px-4 py-2 rounded"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        onClick={() => {
+                          if (!newCategory || newLimit === "") return;
+                          console.log({
+                            name: newCategory,
+                            limit: newLimit,
+                            period: newPeriod,
+                            used: 0,
+                          });
+                          setShowAddModal(false);
+                          setNewCategory("");
+                          setNewLimit("");
+                          setNewPeriod("monthly");
+                        }}
+                        className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
+                      >
+                        Add Limit
+                      </button>
+                    </div>
+
+                    {/* Close button */}
+                    <button
+                      onClick={() => setShowAddModal(false)}
                       className="absolute top-3 right-3 text-gray-400 hover:text-white"
                     >
                       ✕
