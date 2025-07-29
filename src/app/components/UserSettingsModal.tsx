@@ -23,6 +23,10 @@ export default function UserSettingsModal({ onClose }: Props) {
   const [amount, setAmount] = useState<number | "">("");
   const [category, setCategory] = useState("income");
   const [startDate, setStartDate] = useState("");
+  const [showAccountModal, setShowAccountModal] = useState(false);
+  const [accountName, setAccountName] = useState("");
+  const [accountType, setAccountType] = useState("checking");
+  const [accountBalance, setAccountBalance] = useState<number | "">("");
   const [budgetLimits, setBudgetLimits] = useState([
     { name: "Food", used: 50, limit: 500 },
   ]);
@@ -328,11 +332,15 @@ export default function UserSettingsModal({ onClose }: Props) {
             </>
           )}
 
+          {/* Account Tab */}
           {activeTab === "accounts" && (
             <div className="space-y-6">
               <div className="flex items-center justify-between">
                 <h3 className="text-lg font-bold">Accounts</h3>
-                <button className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded text-white text-sm">
+                <button
+                  onClick={() => setShowAccountModal(true)}
+                  className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded text-white text-sm"
+                >
                   + Add Account
                 </button>
               </div>
@@ -383,6 +391,77 @@ export default function UserSettingsModal({ onClose }: Props) {
                   </div>
                 </div>
               </div>
+
+              {showAccountModal && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+                  <div className="bg-white dark:bg-slate-800 text-black dark:text-white p-6 rounded-xl w-full max-w-md shadow-lg relative">
+                    <h3 className="text-lg font-bold mb-4">Add Account</h3>
+
+                    <div className="space-y-4">
+                      <input
+                        type="text"
+                        placeholder="Account Name"
+                        value={accountName}
+                        onChange={(e) => setAccountName(e.target.value)}
+                        className="w-full px-3 py-2 rounded bg-slate-200 dark:bg-slate-700"
+                      />
+
+                      <select
+                        value={accountType}
+                        onChange={(e) => setAccountType(e.target.value)}
+                        className="w-full px-3 py-2 rounded bg-slate-200 dark:bg-slate-700"
+                      >
+                        <option value="checking">Checking</option>
+                        <option value="savings">Savings</option>
+                        <option value="credit">Credit</option>
+                        <option value="investment">Investment</option>
+                      </select>
+
+                      <input
+                        type="number"
+                        placeholder="Current Balance"
+                        value={accountBalance}
+                        onChange={(e) =>
+                          setAccountBalance(Number(e.target.value))
+                        }
+                        className="w-full px-3 py-2 rounded bg-slate-200 dark:bg-slate-700"
+                      />
+                    </div>
+
+                    <div className="flex justify-end gap-2 mt-6">
+                      <button
+                        onClick={() => setShowAccountModal(false)}
+                        className="bg-gray-300 dark:bg-gray-700 text-black dark:text-white px-4 py-2 rounded"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        onClick={() => {
+                          if (!accountName || accountBalance === "") return;
+                          console.log({
+                            accountName,
+                            accountType,
+                            accountBalance,
+                          });
+                          setShowAccountModal(false);
+                          setAccountName("");
+                          setAccountType("checking");
+                          setAccountBalance("");
+                        }}
+                        className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
+                      >
+                        Add Account
+                      </button>
+                    </div>
+                    <button
+                      onClick={() => setShowAccountModal(false)}
+                      className="absolute top-3 right-3 text-gray-400 hover:text-white"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           )}
 
