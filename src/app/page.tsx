@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Search, SlidersHorizontal } from "lucide-react";
+import { UserSettingsProvider } from "./components/usersettingscontext";
 import UserSettingsModal from "./components/usersettingsmodal";
 import AddTransactionModal from "./components/addtransactionmodal";
 import FinancialOverview from "./components/financialoverview";
@@ -25,7 +26,7 @@ export default function Home() {
   }, [isDarkMode]);
 
   return (
-    <>
+    <UserSettingsProvider>
       {/* Header */}
       <header className="bg-slate-800 text-white h-[72px] flex items-center">
         <div className="max-w-[1240px] w-full mx-auto px-4 flex justify-between items-center">
@@ -258,6 +259,6 @@ export default function Home() {
           </div>
         </div>
       </section>
-    </>
+    </UserSettingsProvider>
   );
 }

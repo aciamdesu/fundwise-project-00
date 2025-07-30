@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { UserSettingsProvider } from "./components/usersettingscontext";
+
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -25,13 +27,14 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        {/* ✅ This is important for responsive Tailwind to work */}
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[#0f172a]`}
       >
-        {children}
+        <UserSettingsProvider>
+          {children}
+        </UserSettingsProvider>
       </body>
     </html>
   );

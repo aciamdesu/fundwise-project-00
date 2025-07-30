@@ -2,23 +2,56 @@
 
 import { useState } from "react";
 import { Pencil, Trash2, X } from "lucide-react";
+import { useUserSettings } from "./usersettingscontext";
+import AddBudgetModal from "./AddBudgetModal";
+
 
 type Props = {
   onClose: () => void;
 };
 
-export default function UserSettingsModal({ onClose }: Props) {
-  const [activeTab, setActiveTab] = useState("profile");
+type BudgetItem = {
+  name: string;
+  limit: number;
+  used: number;
+};
+
+type Account = {
+  id: string;
+  name: string;
+  balance: number;
+  type: string; 
+};
+
+
+
+export default function usersettingsmodal({ onClose }: Props) {
+  const {
+    showAddBudgetModal,
+    setShowAddBudgetModal,
+    showEditBudgetModal,
+    setShowEditBudgetModal,
+    showAddRecurringModal,
+    setShowAddRecurringModal,
+    showEditRecurringModal,
+    setShowEditRecurringModal,
+    showAddAccountModal,
+    setShowAddAccountModal,
+    showEditAccountModal,
+    setShowEditAccountModal,
+    showAddSavingsModal,
+    setShowAddSavingsModal,
+    showEditSavingsModal,
+    setShowEditSavingsModal,
+  } = useUserSettings();
+  
+  const { activeTab, setActiveTab } = useUserSettings();
   const [editItem, setEditItem] = useState<BudgetItem | null>(null);
 
-  const [showAddBudgetModal, setShowAddBudgetModal] = useState(false);
-  const [showEditBudgetModal, setShowEditBudgetModal] = useState(false);
   const [category, setCategory] = useState("");
   const [limit, setLimit] = useState<number | "">("");
   const [period, setPeriod] = useState("monthly");
 
-  const [showAddRecurringModal, setShowAddRecurringModal] = useState(false);
-  const [showEditRecurringModal, setShowEditRecurringModal] = useState(false);
   const [description, setDescription] = useState("");
   const [amount, setAmount] = useState<number | "">("");
   const [type, setType] = useState("expense");
@@ -27,20 +60,17 @@ export default function UserSettingsModal({ onClose }: Props) {
   const [newCategory, setNewCategory] = useState("income");
   const [startDate, setStartDate] = useState("");
 
-  const [showAddAccountModal, setShowAddAccountModal] = useState(false);
-  const [showEditAccountModal, setShowEditAccountModal] = useState(false);
   const [accountName, setAccountName] = useState("");
   const [accountType, setAccountType] = useState("checking");
   const [accountBalance, setAccountBalance] = useState<number | "">("");
 
-  const [showAddSavingsModal, setShowAddSavingsModal] = useState(false);
-  const [showEditSavingsModal, setShowEditSavingsModal] = useState(false);
   const [goalName, setGoalName] = useState("");
   const [targetDate, setTargetDate] = useState("");
   const [targetAmount, setTargetAmount] = useState<number | "">("");
   const [currentAmountSaved, setCurrentAmountSaved] = useState<number | "">("");
 
-  const [budgetLimits, setBudgetLimits] = useState([
+  const { budgetLimits, setBudgetLimits } = useUserSettings();
+  const [budgetLimits, setBudgetLimits] = useState<BudgetItem[]>([
     { name: "Food", used: 50, limit: 500 },
   ]);
   const handleDelete = (name: string) => {
@@ -176,235 +206,8 @@ export default function UserSettingsModal({ onClose }: Props) {
             </>
           )}
 
-          {/* Budget Limits Tab */}
-          {activeTab === "budget" && (
-            <>
-              <div className="flex justify-between items-center mb-4">
-                <h3 className="font-bold text-lg">Budget Limits</h3>
-                <button
-                  onClick={() => setShowAddBudgetModal(true)}
-                  className="bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded text-sm text-white"
-                >
-                  + Add Limit
-                </button>
-              </div>
+{activeTab === "budget" && <BudgetLimitsTab />}
 
-              <div className="space-y-4">
-                {budgetLimits.map((item) => {
-                  const percent = Math.round((item.used / item.limit) * 100);
-                  return (
-                    <div
-                      key={item.name}
-                      className="bg-slate-700 p-4 rounded-xl shadow flex flex-col gap-2"
-                    >
-                      <div className="flex justify-between items-center">
-                        <h4 className="font-semibold">{item.name}</h4>
-                        <div className="flex items-center gap-4 text-sm text-gray-300">
-                          <span>
-                            ${item.used.toFixed(2)} of ${item.limit.toFixed(2)}
-                          </span>
-                          <span>{percent}%</span>
-                          <div className="flex gap-2">
-                            <button onClick={() => handleEdit(item)}>
-                              <Pencil
-                                size={16}
-                                className="text-blue-400 hover:text-blue-500"
-                              />
-                            </button>
-                            <button onClick={() => handleDelete(item.name)}>
-                              <Trash2
-                                size={16}
-                                className="text-red-400 hover:text-red-500"
-                              />
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="w-full h-2 bg-slate-600 rounded">
-                        <div
-                          className="h-2 bg-green-500 rounded"
-                          style={{ width: `${percent}%` }}
-                        ></div>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-
-              {/* Add Budget Modal */}
-              {showAddBudgetModal && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-                  <div className="bg-white dark:bg-slate-800 text-black dark:text-white p-6 rounded-xl w-full max-w-md shadow-lg relative">
-                    <h3 className="text-lgfont-bold mb-4">Add Budget Limit</h3>
-
-                    {/* Category */}
-                    <input
-                      type="text"
-                      placeholder="Category"
-                      value={category}
-                      onChange={(e) => setCategory(e.target.value)}
-                      className="w-full px-3 py-2 rounded bg-slate-200 dark:bg-slate-700 mb-4"
-                    />
-
-                    {/* Limit */}
-                    <input
-                      type="number"
-                      placeholder="Limit Amount"
-                      value={limit}
-                      onChange={(e) => setLimit(Number(e.target.value))}
-                      className="w-full px-3 py-2 rounded bg-slate-200 dark:bg-slate-700 mb-4"
-                    />
-
-                    {/* Period Dropdown */}
-                    <select
-                      value={period}
-                      onChange={(e) => setPeriod(e.target.value)}
-                      className="w-full px-3 py-2 rounded bg-slate-200 dark:bg-slate-700 mb-4"
-                    >
-                      <option value="monthly">Monthly</option>
-                      <option value="yearly">Yearly</option>
-                    </select>
-
-                    {/* Buttons */}
-                    <div className="flex justify-end gap-2">
-                      <button
-                        onClick={() => setShowAddBudgetModal(false)}
-                        className="bg-gray-300 dark:bg-gray-700 text-black dark:text-white px-4 py-2 rounded"
-                      >
-                        Cancel
-                      </button>
-                      <button
-                        onClick={() => {
-                          if (!category || limit === "") return;
-                          console.log({
-                            name: category,
-                            limit: limit,
-                            period: period,
-                            used: 0,
-                          });
-                          setShowAddBudgetModal(false);
-                          setCategory("");
-                          setLimit("");
-                          setPeriod("monthly");
-                        }}
-                        className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
-                      >
-                        Add Limit
-                      </button>
-                    </div>
-
-                    {/* Close button */}
-                    <button
-                      onClick={() => setShowAddBudgetModal(false)}
-                      className="absolute top-3 right-3 text-gray-400 hover:text-white"
-                    >
-                      ✕
-                    </button>
-                  </div>
-                </div>
-              )}
-
-              {/* Edit Budget Modal */}
-              {showEditBudgetModal && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-                  <div className="bg-white dark:bg-slate-800 text-black dark:text-white p-6 rounded-xl w-full max-w-md shadow-lg relative">
-                    <h3 className="text-lg font-bold mb-4">
-                      Edit Budget Limit
-                    </h3>
-
-                    {/* Form fields */}
-                    <input
-                      type="text"
-                      placeholder="Budget name"
-                      className="w-full px-3 py-2 rounded bg-slate-200 dark:bg-slate-700 mb-4"
-                    />
-                    <input
-                      type="number"
-                      placeholder="Limit"
-                      className="w-full px-3 py-2 rounded bg-slate-200 dark:bg-slate-700 mb-4"
-                    />
-
-                    <div className="flex justify-end gap-2">
-                      <button
-                        onClick={() => setShowEditBudgetModal(false)}
-                        className="bg-gray-300 dark:bg-gray-700 text-black dark:text-white px-4 py-2 rounded"
-                      >
-                        Cancel
-                      </button>
-                      <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">
-                        Save
-                      </button>
-                    </div>
-
-                    {/* Close button */}
-                    <button
-                      onClick={() => setShowEditBudgetModal(false)}
-                      className="absolute top-3 right-3 text-gray-400 hover:text-white"
-                    >
-                      ✕
-                    </button>
-                  </div>
-                </div>
-              )}
-            </>
-          )}
-
-          {/* Recurring Tab */}
-          {activeTab === "recurring" && (
-            <>
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-bold">Recurring Transactions</h3>
-                <button
-                  onClick={() => setShowAddRecurringModal(true)}
-                  className="bg--blue-600 hover:bg-blue-700 px-4 py-2 rounded text-white text-sm"
-                >
-                  + Add Recurring
-                </button>
-              </div>
-
-              <div className="overflow-auto rounded-md border border-slate-700">
-                <table className="min-w-full text-sm">
-                  <thead className="bg-slate-700 text-white">
-                    <tr>
-                      <th className="text-left p-3">Description</th>
-                      <th className="text-left p-3">Amount</th>
-                      <th className="text-left p-3">Category</th>
-                      <th className="text-left p-3">Frequency</th>
-                      <th className="text-left p-3">Next Date</th>
-                      <th className="text-left p-3">Status</th>
-                      <th className="text-left p-3">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr className="border-t border-slate-700">
-                      <td className="p-3">Monthly Salary</td>
-                      <td className="p-3 text-green-400">+ $3,000.00</td>
-                      <td className="p-3">Income</td>
-                      <td className="p-3">Monthly</td>
-                      <td className="p-3">Aug 3, 2025</td>
-                      <td className="p-3">
-                        <span className="bg-green-600 text-white px-2 py-1 rounded text-xs">
-                          Active
-                        </span>
-                      </td>
-                      <td className="p-3 space-x-2">
-                        <button
-                          onClick={() => setShowEditRecurringModal(true)}
-                          className="text-blue-400 hover:underline"
-                        >
-                          ✏️
-                        </button>
-                        <button className="text-yellow-400 hover:underline">
-                          ❌
-                        </button>
-                        <button className="text-red-400 hover:underline">
-                          🗑
-                        </button>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
 
               {/* Add Recurring Modal */}
               {showAddRecurringModal && (

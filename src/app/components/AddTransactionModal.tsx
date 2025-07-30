@@ -7,7 +7,7 @@ type Props = {
   onClose: () => void;
 };
 
-export default function AddTransactionModal({ onClose }: Props) {
+export default function addtransactionmodal({ onClose }: Props) {
   const [type, setType] = useState("expense");
   const [description, setDescription] = useState("");
   const [amount, setAmount] = useState(0);
