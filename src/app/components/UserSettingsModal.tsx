@@ -1,6 +1,6 @@
 "use client";
 
-import { use, useState } from "react";
+import { useState } from "react";
 import { Pencil, Trash2, X } from "lucide-react";
 
 type Props = {
@@ -10,46 +10,59 @@ type Props = {
 export default function UserSettingsModal({ onClose }: Props) {
   const [activeTab, setActiveTab] = useState("profile");
   const [editItem, setEditItem] = useState<BudgetItem | null>(null);
-  const [showEditModal, setShowEditModal] = useState(false);
-  const [showAddModal, setShowAddModal] = useState(false);
-  const [newCategory, setNewCategory] = useState("");
-  const [newLimit, setNewLimit] = useState<number | "">("");
-  const [newPeriod, setNewPeriod] = useState("monthly");
-  const [showRecurringModal, setShowRecurringModal] = useState(false);
+
+  const [showAddBudgetModal, setShowAddBudgetModal] = useState(false);
+  const [showEditBudgetModal, setShowEditBudgetModal] = useState(false);
+  const [category, setCategory] = useState("");
+  const [limit, setLimit] = useState<number | "">("");
+  const [period, setPeriod] = useState("monthly");
+
+  const [showAddRecurringModal, setShowAddRecurringModal] = useState(false);
+  const [showEditRecurringModal, setShowEditRecurringModal] = useState(false);
   const [description, setDescription] = useState("");
+  const [amount, setAmount] = useState<number | "">("");
   const [type, setType] = useState("expense");
   const [frequency, setFrequency] = useState("monthly");
-  const [active, setActive] = useState("true");
-  const [amount, setAmount] = useState<number | "">("");
-  const [category, setCategory] = useState("income");
+  const [active, setActive] = useState(true);
+  const [newCategory, setNewCategory] = useState("income");
   const [startDate, setStartDate] = useState("");
-  const [showAccountModal, setShowAccountModal] = useState(false);
+
+  const [showAddAccountModal, setShowAddAccountModal] = useState(false);
+  const [showEditAccountModal, setShowEditAccountModal] = useState(false);
   const [accountName, setAccountName] = useState("");
   const [accountType, setAccountType] = useState("checking");
   const [accountBalance, setAccountBalance] = useState<number | "">("");
-  const [showSavingsModal, setShowSavingModal] = useState(false);
+
+  const [showAddSavingsModal, setShowAddSavingsModal] = useState(false);
+  const [showEditSavingsModal, setShowEditSavingsModal] = useState(false);
   const [goalName, setGoalName] = useState("");
   const [targetDate, setTargetDate] = useState("");
   const [targetAmount, setTargetAmount] = useState<number | "">("");
   const [currentAmountSaved, setCurrentAmountSaved] = useState<number | "">("");
+
   const [budgetLimits, setBudgetLimits] = useState([
     { name: "Food", used: 50, limit: 500 },
   ]);
   const handleDelete = (name: string) => {
     setBudgetLimits((prev) => prev.filter((item) => item.name !== name));
   };
-  const handleEdit = (item) => {
+  const handleEdit = (item: BudgetItem) => {
     setEditItem(item);
-    setShowEditModal(true);
+    setShowEditBudgetModal(true);
   };
   const handleUpdate = () => {
-    setShowEditModal(false);
+    setShowEditBudgetModal(false);
+  };
+  const handleEditAccount = (account: Account) => {
+    setAccountName(account.name);
+    setAccountType(account.type);
+    setAccountBalance(account.balance);
+    setShowEditAccountModal(true);
   };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
       <div className="bg-slate-800 w-full max-w-5xl rounded-xl shadow-lg flex flex-col md:flex-row overflow-hidden relative max-h-[90vh]">
-        {/* Close Button */}
         <button
           onClick={onClose}
           className="absolute top-4 right-4 text-white hover:text-red-400 z-50"
@@ -135,25 +148,23 @@ export default function UserSettingsModal({ onClose }: Props) {
                     />
                     <label>Dark Mode</label>
                   </div>
-                  <div>
-                    <label className="text-sm mb-1 block">
-                      Preferred Currency
-                    </label>
-                    <select className="px-3 py-2 rounded bg-slate-700 border border-slate-600 text-white">
-                      <option>USD ($)</option>
-                      <option>PHP (₱)</option>
-                      <option>EUR (€)</option>
-                    </select>
-                    <span className="text-xs text-gray-400 mt-1 block">
-                      This will be used for all monetary values.
-                    </span>
-                  </div>
-                  <div>
-                    <label className="flex items-center gap-2">
-                      <input type="checkbox" className="accent-blue-500" />
-                      Show budget alerts when approaching limits
-                    </label>
-                  </div>
+                  <label className="text-sm mb-1 block">
+                    Preferred Currency
+                  </label>
+                  <select className="px-3 py-2 rounded bg-slate-700 border border-slate-600 text-white">
+                    <option>USD ($)</option>
+                    <option>PHP (₱)</option>
+                    <option>EUR (€)</option>
+                  </select>
+                  <span className="text-xs text-gray-400 mt-1 block">
+                    This will be used for all monetary values.
+                  </span>
+                </div>
+                <div>
+                  <label className="flex items-center gap-2">
+                    <input type="checkbox" className="accent-blue-500" />
+                    Show budget alerts when approaching limits
+                  </label>
                 </div>
               </div>
 
@@ -171,7 +182,7 @@ export default function UserSettingsModal({ onClose }: Props) {
               <div className="flex justify-between items-center mb-4">
                 <h3 className="font-bold text-lg">Budget Limits</h3>
                 <button
-                  onClick={() => setShowAddModal(true)}
+                  onClick={() => setShowAddBudgetModal(true)}
                   className="bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded text-sm text-white"
                 >
                   + Add Limit
@@ -220,8 +231,81 @@ export default function UserSettingsModal({ onClose }: Props) {
                 })}
               </div>
 
-              {/* Edit Modal */}
-              {showEditModal && (
+              {/* Add Budget Modal */}
+              {showAddBudgetModal && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+                  <div className="bg-white dark:bg-slate-800 text-black dark:text-white p-6 rounded-xl w-full max-w-md shadow-lg relative">
+                    <h3 className="text-lgfont-bold mb-4">Add Budget Limit</h3>
+
+                    {/* Category */}
+                    <input
+                      type="text"
+                      placeholder="Category"
+                      value={category}
+                      onChange={(e) => setCategory(e.target.value)}
+                      className="w-full px-3 py-2 rounded bg-slate-200 dark:bg-slate-700 mb-4"
+                    />
+
+                    {/* Limit */}
+                    <input
+                      type="number"
+                      placeholder="Limit Amount"
+                      value={limit}
+                      onChange={(e) => setLimit(Number(e.target.value))}
+                      className="w-full px-3 py-2 rounded bg-slate-200 dark:bg-slate-700 mb-4"
+                    />
+
+                    {/* Period Dropdown */}
+                    <select
+                      value={period}
+                      onChange={(e) => setPeriod(e.target.value)}
+                      className="w-full px-3 py-2 rounded bg-slate-200 dark:bg-slate-700 mb-4"
+                    >
+                      <option value="monthly">Monthly</option>
+                      <option value="yearly">Yearly</option>
+                    </select>
+
+                    {/* Buttons */}
+                    <div className="flex justify-end gap-2">
+                      <button
+                        onClick={() => setShowAddBudgetModal(false)}
+                        className="bg-gray-300 dark:bg-gray-700 text-black dark:text-white px-4 py-2 rounded"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        onClick={() => {
+                          if (!category || limit === "") return;
+                          console.log({
+                            name: category,
+                            limit: limit,
+                            period: period,
+                            used: 0,
+                          });
+                          setShowAddBudgetModal(false);
+                          setCategory("");
+                          setLimit("");
+                          setPeriod("monthly");
+                        }}
+                        className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
+                      >
+                        Add Limit
+                      </button>
+                    </div>
+
+                    {/* Close button */}
+                    <button
+                      onClick={() => setShowAddBudgetModal(false)}
+                      className="absolute top-3 right-3 text-gray-400 hover:text-white"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* Edit Budget Modal */}
+              {showEditBudgetModal && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
                   <div className="bg-white dark:bg-slate-800 text-black dark:text-white p-6 rounded-xl w-full max-w-md shadow-lg relative">
                     <h3 className="text-lg font-bold mb-4">
@@ -242,7 +326,7 @@ export default function UserSettingsModal({ onClose }: Props) {
 
                     <div className="flex justify-end gap-2">
                       <button
-                        onClick={() => setShowEditModal(false)}
+                        onClick={() => setShowEditBudgetModal(false)}
                         className="bg-gray-300 dark:bg-gray-700 text-black dark:text-white px-4 py-2 rounded"
                       >
                         Cancel
@@ -254,79 +338,7 @@ export default function UserSettingsModal({ onClose }: Props) {
 
                     {/* Close button */}
                     <button
-                      onClick={() => setShowEditModal(false)}
-                      className="absolute top-3 right-3 text-gray-400 hover:text-white"
-                    >
-                      ✕
-                    </button>
-                  </div>
-                </div>
-              )}
-
-              {showAddModal && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-                  <div className="bg-white dark:bg-slate-800 text-black dark:text-white p-6 rounded-xl w-full max-w-md shadow-lg relative">
-                    <h3 className="text-lgfont-bold mb-4">Add Budget Limit</h3>
-
-                    {/* Category */}
-                    <input
-                      type="text"
-                      placeholder="Category"
-                      value={newCategory}
-                      onChange={(e) => setNewCategory(e.target.value)}
-                      className="w-full px-3 py-2 rounded bg-slate-200 dark:bg-slate-700 mb-4"
-                    />
-
-                    {/* Limit */}
-                    <input
-                      type="number"
-                      placeholder="Limit Amount"
-                      value={newLimit}
-                      onChange={(e) => setNewLimit(Number(e.target.value))}
-                      className="w-full px-3 py-2 rounded bg-slate-200 dark:bg-slate-700 mb-4"
-                    />
-
-                    {/* Period Dropdown */}
-                    <select
-                      value={newPeriod}
-                      onChange={(e) => setNewPeriod(e.target.value)}
-                      className="w-full px-3 py-2 rounded bg-slate-200 dark:bg-slate-700 mb-4"
-                    >
-                      <option value="monthly">Monthly</option>
-                      <option value="yearly">Yearly</option>
-                    </select>
-
-                    {/* Buttons */}
-                    <div className="flex justify-end gap-2">
-                      <button
-                        onClick={() => setShowAddModal(false)}
-                        className="bg-gray-300 dark:bg-gray-700 text-black dark:text-white px-4 py-2 rounded"
-                      >
-                        Cancel
-                      </button>
-                      <button
-                        onClick={() => {
-                          if (!newCategory || newLimit === "") return;
-                          console.log({
-                            name: newCategory,
-                            limit: newLimit,
-                            period: newPeriod,
-                            used: 0,
-                          });
-                          setShowAddModal(false);
-                          setNewCategory("");
-                          setNewLimit("");
-                          setNewPeriod("monthly");
-                        }}
-                        className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
-                      >
-                        Add Limit
-                      </button>
-                    </div>
-
-                    {/* Close button */}
-                    <button
-                      onClick={() => setShowAddModal(false)}
+                      onClick={() => setShowEditBudgetModal(false)}
                       className="absolute top-3 right-3 text-gray-400 hover:text-white"
                     >
                       ✕
@@ -337,147 +349,14 @@ export default function UserSettingsModal({ onClose }: Props) {
             </>
           )}
 
-          {/* Account Tab */}
-          {activeTab === "accounts" && (
-            <div className="space-y-6">
-              <div className="flex items-center justify-between">
-                <h3 className="text-lg font-bold">Accounts</h3>
-                <button
-                  onClick={() => setShowAccountModal(true)}
-                  className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded text-white text-sm"
-                >
-                  + Add Account
-                </button>
-              </div>
-
-              {/* Total Net Worth Summary */}
-              <div className="bg-slate-700 p-4 rounded-xl shadow">
-                <h4 className="text-sm text-gray-400 mb-1">Total Net Worth</h4>
-                <div className="text-2xl font-semibold text-white">
-                  $7,500.00
-                </div>
-              </div>
-
-              {/* Account Cards - Side by Side */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {/* Main Checking */}
-                <div className="bg-slate-700 p-4 rounded-xl shadow flex items-center justify-between">
-                  <div>
-                    <div className="text-sm text-gray-400">Main Checking</div>
-                    <div className="text-xl font-semibold text-white">
-                      $2,500.00
-                    </div>
-                  </div>
-                  <div className="flex gap-2">
-                    <button className="text-blue-400 hover:underline text-sm">
-                      ✏️
-                    </button>
-                    <button className="text-blue-400 hover:underline text-sm">
-                      🗑
-                    </button>
-                  </div>
-                </div>
-
-                {/* Savings */}
-                <div className="bg-slate-700 p-4 rounded-xl shadow flex items-center justify-between">
-                  <div>
-                    <div className="text-sm text-gray-400">Savings</div>
-                    <div className="text-xl font-semibold text-green-400">
-                      $5,000.00
-                    </div>
-                  </div>
-                  <div className="flex gap-2">
-                    <button className="text-blue-400 hover:underline text-sm">
-                      ✏️
-                    </button>
-                    <button className="text-blue-400 hover:underline text-sm">
-                      🗑
-                    </button>
-                  </div>
-                </div>
-              </div>
-
-              {showAccountModal && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-                  <div className="bg-white dark:bg-slate-800 text-black dark:text-white p-6 rounded-xl w-full max-w-md shadow-lg relative">
-                    <h3 className="text-lg font-bold mb-4">Add Account</h3>
-
-                    <div className="space-y-4">
-                      <input
-                        type="text"
-                        placeholder="Account Name"
-                        value={accountName}
-                        onChange={(e) => setAccountName(e.target.value)}
-                        className="w-full px-3 py-2 rounded bg-slate-200 dark:bg-slate-700"
-                      />
-
-                      <select
-                        value={accountType}
-                        onChange={(e) => setAccountType(e.target.value)}
-                        className="w-full px-3 py-2 rounded bg-slate-200 dark:bg-slate-700"
-                      >
-                        <option value="checking">Checking</option>
-                        <option value="savings">Savings</option>
-                        <option value="credit">Credit</option>
-                        <option value="investment">Investment</option>
-                      </select>
-
-                      <input
-                        type="number"
-                        placeholder="Current Balance"
-                        value={accountBalance}
-                        onChange={(e) =>
-                          setAccountBalance(Number(e.target.value))
-                        }
-                        className="w-full px-3 py-2 rounded bg-slate-200 dark:bg-slate-700"
-                      />
-                    </div>
-
-                    <div className="flex justify-end gap-2 mt-6">
-                      <button
-                        onClick={() => setShowAccountModal(false)}
-                        className="bg-gray-300 dark:bg-gray-700 text-black dark:text-white px-4 py-2 rounded"
-                      >
-                        Cancel
-                      </button>
-                      <button
-                        onClick={() => {
-                          if (!accountName || accountBalance === "") return;
-                          console.log({
-                            accountName,
-                            accountType,
-                            accountBalance,
-                          });
-                          setShowAccountModal(false);
-                          setAccountName("");
-                          setAccountType("checking");
-                          setAccountBalance("");
-                        }}
-                        className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
-                      >
-                        Add Account
-                      </button>
-                    </div>
-                    <button
-                      onClick={() => setShowAccountModal(false)}
-                      className="absolute top-3 right-3 text-gray-400 hover:text-white"
-                    >
-                      ✕
-                    </button>
-                  </div>
-                </div>
-              )}
-            </div>
-          )}
-
           {/* Recurring Tab */}
           {activeTab === "recurring" && (
             <>
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-lg font-bold">Recurring Transactions</h3>
                 <button
-                  onClick={() => setShowRecurringModal(true)}
-                  className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded text-white text-sm"
+                  onClick={() => setShowAddRecurringModal(true)}
+                  className="bg--blue-600 hover:bg-blue-700 px-4 py-2 rounded text-white text-sm"
                 >
                   + Add Recurring
                 </button>
@@ -509,7 +388,10 @@ export default function UserSettingsModal({ onClose }: Props) {
                         </span>
                       </td>
                       <td className="p-3 space-x-2">
-                        <button className="text-blue-400 hover:underline">
+                        <button
+                          onClick={() => setShowEditRecurringModal(true)}
+                          className="text-blue-400 hover:underline"
+                        >
                           ✏️
                         </button>
                         <button className="text-yellow-400 hover:underline">
@@ -525,7 +407,7 @@ export default function UserSettingsModal({ onClose }: Props) {
               </div>
 
               {/* Add Recurring Modal */}
-              {showRecurringModal && (
+              {showAddRecurringModal && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
                   <div className="bg-white dark:bg-slate-800 text-black dark:text-white p-6 rounded-xl w-full max-w-3xl shadow-lg relative">
                     <h3 className="text-lg font-bold mb-6">
@@ -606,7 +488,7 @@ export default function UserSettingsModal({ onClose }: Props) {
 
                     <div className="flex justify-end gap-2 mt-6">
                       <button
-                        onClick={() => setShowRecurringModal(false)}
+                        onClick={() => setShowAddRecurringModal(false)}
                         className="bg-gray-300 dark:bg-gray-700 text-black dark:text-white px-4 py-2 rounded"
                       >
                         Cancel
@@ -621,16 +503,16 @@ export default function UserSettingsModal({ onClose }: Props) {
                             frequency,
                             active,
                             amount,
-                            category,
+                            newCategory,
                             startDate,
                           });
-                          setShowRecurringModal(false);
+                          setShowAddRecurringModal(false);
                           setDescription("");
                           setType("expense");
                           setFrequency("monthly");
                           setActive(true);
                           setAmount("");
-                          setCategory("income");
+                          setNewCategory("income");
                           setStartDate("");
                         }}
                         className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
@@ -640,7 +522,132 @@ export default function UserSettingsModal({ onClose }: Props) {
                     </div>
 
                     <button
-                      onClick={() => setShowRecurringModal(false)}
+                      onClick={() => setShowAddRecurringModal(false)}
+                      className="absolute top-3 right-3 text-gray-400 hover:text-white"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* Edit Recurring Modal */}
+              {showEditRecurringModal && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+                  <div className="bg-white dark:bg-slate-800 text-black dark:text-white p-6 rounded-xl w-full max-w-3xl shadow-lg relative">
+                    <h3 className="text-lg font-bold mb-6">
+                      Edit Recurring Transaction
+                    </h3>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      {/* Left Column */}
+                      <div className="space-y-4">
+                        <input
+                          type="text"
+                          placeholder="Description"
+                          value={description}
+                          onChange={(e) => setDescription(e.target.value)}
+                          className="w-full px-3 py-2 rounded bg-slate-200 dark:bg-slate-700"
+                        />
+
+                        <select
+                          value={type}
+                          onChange={(e) => setType(e.target.value)}
+                          className="w-full px-3 py-2 rounded bg-slate-200 dark:bg-slate-700"
+                        >
+                          <option value="income">Income</option>
+                          <option value="expense">Expense</option>
+                        </select>
+
+                        <select
+                          value={frequency}
+                          onChange={(e) => setFrequency(e.target.value)}
+                          className="w-full px-3 py-2 rounded bg-slate-200 dark:bg-slate-700"
+                        >
+                          <option value="daily">Daily</option>
+                          <option value="weekly">Weekly</option>
+                          <option value="monthly">Monthly</option>
+                          <option value="yearly">Yearly</option>
+                        </select>
+
+                        <label className="flex items-center gap-2 text-sm">
+                          <input
+                            type="checkbox"
+                            checked={true}
+                            onChange={(e) => setActive(e.target.checked)}
+                          />
+                          Active
+                        </label>
+                      </div>
+
+                      {/* Right Column */}
+                      <div className="space-y-4">
+                        <input
+                          type="number"
+                          placeholder="Amount"
+                          value={amount}
+                          onChange={(e) => setAmount(Number(e.target.value))}
+                          className="w-full px-3 py-2 rounded bg-slate-200 dark:bg-slate-700"
+                        />
+
+                        <select
+                          value={newCategory}
+                          onChange={(e) => setNewCategory(e.target.value)}
+                          className="w-full px-3 py-2 rounded bg-slate-200 dark:bg-slate-700"
+                        >
+                          <option value="income">Income</option>
+                          <option value="housing">Housing</option>
+                          <option value="food">Food</option>
+                          <option value="transportation">Transportation</option>
+                          <option value="entertainment">Entertainment</option>
+                        </select>
+
+                        <input
+                          type="date"
+                          value={startDate}
+                          onChange={(e) => setStartDate(e.target.value)}
+                          className="w-full px-3 py-2 rounded bg-slate-200 dark:bg-slate-700"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="flex justify-end gap-2 mt-6">
+                      <button
+                        onClick={() => setShowEditRecurringModal(false)}
+                        className="bg-gray-300 dark:bg-gray-700 text-black dark:text-white px-4 py-2 rounded"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        onClick={() => {
+                          if (!description || amount === "" || !startDate)
+                            return;
+                          console.log({
+                            description,
+                            type,
+                            frequency,
+                            active,
+                            amount,
+                            newCategory,
+                            startDate,
+                          });
+                          setShowEditRecurringModal(false);
+                          setDescription("");
+                          setType("expense");
+                          setFrequency("monthly");
+                          setActive(true);
+                          setAmount("");
+                          setNewCategory("income");
+                          setStartDate("");
+                        }}
+                        className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
+                      >
+                        Update Recurring Modal
+                      </button>
+                    </div>
+
+                    <button
+                      onClick={() => setShowEditRecurringModal(false)}
                       className="absolute top-3 right-3 text-gray-400 hover:text-white"
                     >
                       ✕
@@ -651,13 +658,231 @@ export default function UserSettingsModal({ onClose }: Props) {
             </>
           )}
 
+          {/* Account Tab */}
+          {activeTab === "accounts" && (
+            <div className="space-y-6">
+              <div className="flex items-center justify-between">
+                <h3 className="text-lg font-bold">Accounts</h3>
+                <button
+                  onClick={() => setShowAddAccountModal(true)}
+                  className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded text-white text-sm"
+                >
+                  + Add Account
+                </button>
+              </div>
+
+              {/* Total Net Worth Summary */}
+              <div className="bg-slate-700 p-4 rounded-xl shadow">
+                <h4 className="text-sm text-gray-400 mb-1">Total Net Worth</h4>
+                <div className="text-2xl font-semibold text-white">
+                  $7,500.00
+                </div>
+              </div>
+
+              {/* Account Cards - Side by Side */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {/* Main Checking */}
+                <div className="bg-slate-700 p-4 rounded-xl shadow flex items-center justify-between">
+                  <div>
+                    <div className="text-sm text-gray-400">Main Checking</div>
+                    <div className="text-xl font-semibold text-white">
+                      $2,500.00
+                    </div>
+                  </div>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() =>
+                        handleEditAccount({
+                          name: "Main Checking",
+                          type: "checking",
+                          balance: 2500,
+                        })
+                      }
+                      className="text-blue-400 hover:underline text-sm"
+                    >
+                      ✏️
+                    </button>
+                    <button className="text-blue-400 hover:underline text-sm">
+                      🗑
+                    </button>
+                  </div>
+                </div>
+
+                {/* Savings */}
+                <div className="bg-slate-700 p-4 rounded-xl shadow flex items-center justify-between">
+                  <div>
+                    <div className="text-sm text-gray-400">Savings</div>
+                    <div className="text-xl font-semibold text-green-400">
+                      $5,000.00
+                    </div>
+                  </div>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => setShowEditAccountModal(true)}
+                      className="text-blue-400 hover:underline text-sm"
+                    >
+                      ✏️
+                    </button>
+                    <button className="text-blue-400 hover:underline text-sm">
+                      🗑
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              {/* Add Account Modal */}
+              {showAddAccountModal && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+                  <div className="bg-white dark:bg-slate-800 text-black dark:text-white p-6 rounded-xl w-full max-w-md shadow-lg relative">
+                    <h3 className="text-lg font-bold mb-4">Add Account</h3>
+
+                    <div className="space-y-4">
+                      <input
+                        type="text"
+                        placeholder="Account Name"
+                        value={accountName}
+                        onChange={(e) => setAccountName(e.target.value)}
+                        className="w-full px-3 py-2 rounded bg-slate-200 dark:bg-slate-700"
+                      />
+
+                      <select
+                        value={accountType}
+                        onChange={(e) => setAccountType(e.target.value)}
+                        className="w-full px-3 py-2 rounded bg-slate-200 dark:bg-slate-700"
+                      >
+                        <option value="checking">Checking</option>
+                        <option value="savings">Savings</option>
+                        <option value="credit">Credit</option>
+                        <option value="investment">Investment</option>
+                      </select>
+
+                      <input
+                        type="number"
+                        placeholder="Current Balance"
+                        value={accountBalance}
+                        onChange={(e) =>
+                          setAccountBalance(Number(e.target.value))
+                        }
+                        className="w-full px-3 py-2 rounded bg-slate-200 dark:bg-slate-700"
+                      />
+                    </div>
+
+                    <div className="flex justify-end gap-2 mt-6">
+                      <button
+                        onClick={() => setShowAddAccountModal(false)}
+                        className="bg-gray-300 dark:bg-gray-700 text-black dark:text-white px-4 py-2 rounded"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        onClick={() => {
+                          if (!accountName || accountBalance === "") return;
+                          console.log({
+                            accountName,
+                            accountType,
+                            accountBalance,
+                          });
+                          setShowAddAccountModal(false);
+                          setAccountName("");
+                          setAccountType("checking");
+                          setAccountBalance("");
+                        }}
+                        className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
+                      >
+                        Add Account
+                      </button>
+                    </div>
+                    <button
+                      onClick={() => setShowAddAccountModal(false)}
+                      className="absolute top-3 right-3 text-gray-400 hover:text-white"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* Edit Account Modal */}
+              {showEditAccountModal && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+                  <div className="bg-white dark:bg-slate-800 text-black dark:text-white p-6 rounded-xl w-full max-w-md shadow-lg relative">
+                    <h3 className="text-lg font-bold mb-4">Edit Account</h3>
+
+                    <div className="space-y-4">
+                      <input
+                        type="text"
+                        placeholder="Account Name"
+                        value={accountName}
+                        onChange={(e) => setAccountName(e.target.value)}
+                        className="w-full px-3 py-2 rounded bg-slate-200 dark:bg-slate-700"
+                      />
+
+                      <select
+                        value={accountType}
+                        onChange={(e) => setAccountType(e.target.value)}
+                        className="w-full px-3 py-2 rounded bg-slate-200 dark:bg-slate-700"
+                      >
+                        <option value="checking">Checking</option>
+                        <option value="savings">Savings</option>
+                        <option value="credit">Credit</option>
+                        <option value="investment">Investment</option>
+                      </select>
+
+                      <input
+                        type="number"
+                        placeholder="Current Balance"
+                        value={accountBalance}
+                        onChange={(e) =>
+                          setAccountBalance(Number(e.target.value))
+                        }
+                        className="w-full px-3 py-2 rounded bg-slate-200 dark:bg-slate-700"
+                      />
+                    </div>
+
+                    <div className="flex justify-end gap-2 mt-6">
+                      <button
+                        onClick={() => setShowEditAccountModal(false)}
+                        className="bg-gray-300 dark:bg-gray-700 text-black dark:text-white px-4 py-2 rounded"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        onClick={() => {
+                          if (!accountName || accountBalance === "") return;
+                          console.log({
+                            accountName,
+                            accountType,
+                            accountBalance,
+                          });
+                          setShowEditAccountModal(false);
+                          setAccountName("");
+                          setAccountType("checking");
+                          setAccountBalance("");
+                        }}
+                        className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
+                      >
+                        Add Account
+                      </button>
+                    </div>
+                    <button
+                      onClick={() => setShowEditAccountModal(false)}
+                      className="absolute top-3 right-3 text-gray-400 hover:text-white"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
           {/* Saving Goals Tab */}
           {activeTab === "goals" && (
             <>
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-lg font-bold">Savings Goals</h3>
                 <button
-                  onClick={() => setShowSavingModal(true)}
+                  onClick={() => setShowAddSavingsModal(true)}
                   className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded text-white text-sm"
                 >
                   + Add Goal
@@ -669,7 +894,12 @@ export default function UserSettingsModal({ onClose }: Props) {
                   <div className="flex justify-between items-center">
                     <h4 className="font-semibold text-white">Emergency Fund</h4>
                     <div className="flex gap-3 text-gray-400 text-sm">
-                      <button className="hover:text-blue-400">✏️</button>
+                      <button
+                        onClick={() => setShowEditSavingsModal(true)}
+                        className="hover:text-blue-400"
+                      >
+                        ✏️
+                      </button>
                       <button className="hover:text-blue-400">🗑</button>
                     </div>
                   </div>
@@ -686,7 +916,8 @@ export default function UserSettingsModal({ onClose }: Props) {
                 </div>
               </div>
 
-              {showSavingsModal && (
+              {/* Add Savings Modal */}
+              {showAddSavingsModal && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
                   <div className="bg-white dark:bg-slate-800 text-black dark:text-white p-6 rounded-xl w-full max-w-md shadow-lg relative">
                     <h3 className="text-lg font-bold mb-4">
@@ -732,7 +963,7 @@ export default function UserSettingsModal({ onClose }: Props) {
 
                     <div className="flex justify-end gap-2 mt-6">
                       <button
-                        onClick={() => setShowSavingModal(false)}
+                        onClick={() => setShowAddSavingsModal(false)}
                         className="bg-gray-300 dark:bg-gray-700 text-black dark:text-white px-4 py-2 rounded"
                       >
                         Cancel
@@ -752,7 +983,7 @@ export default function UserSettingsModal({ onClose }: Props) {
                             targetAmount,
                             currentAmountSaved,
                           });
-                          setShowSavingModal(false);
+                          setShowAddSavingsModal(false);
                           setGoalName("");
                           setTargetDate("");
                           setTargetAmount("");
@@ -765,7 +996,96 @@ export default function UserSettingsModal({ onClose }: Props) {
                     </div>
 
                     <button
-                      onClick={() => setShowSavingModal(false)}
+                      onClick={() => setShowAddSavingsModal(false)}
+                      className="absolute top-3 right-3 text-gray-400 hover:text-white"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* Edit Savings Modal */}
+              {showEditSavingsModal && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+                  <div className="bg-white dark:bg-slate-800 text-black dark:text-white p-6 rounded-xl w-full max-w-md shadow-lg relative">
+                    <h3 className="text-lg font-bold mb-4">
+                      Edit Savings Goals
+                    </h3>
+
+                    <div className="space-y-4">
+                      <input
+                        type="text"
+                        placeholder="Goal Name"
+                        value={goalName}
+                        onChange={(e) => setGoalName(e.target.value)}
+                        className="w-full px-3 py-2 rounded bg-slate-200 dark:bg-slate-700"
+                      />
+
+                      <input
+                        type="date"
+                        value={targetDate}
+                        onChange={(e) => setTargetDate(e.target.value)}
+                        className="w-full px-3 py-2 rounded bg-slate-200 dark:bg-slate-700"
+                      />
+
+                      <input
+                        type="number"
+                        placeholder="Target Amount"
+                        value={targetAmount}
+                        onChange={(e) =>
+                          setTargetAmount(Number(e.target.value))
+                        }
+                        className="w-full px-3 py-2 rounded bg-slate-200 dark:bg-slate-700"
+                      />
+
+                      <input
+                        type="number"
+                        placeholder="Current Amount Saved"
+                        value={currentAmountSaved}
+                        onChange={(e) =>
+                          setCurrentAmountSaved(Number(e.target.value))
+                        }
+                        className="w-full px-3 py-2 rounded bg-slate-200 dark:bg-slate-700"
+                      />
+                    </div>
+
+                    <div className="flex justify-end gap-2 mt-6">
+                      <button
+                        onClick={() => setShowEditSavingsModal(false)}
+                        className="bg-gray-300 dark:bg-gray-700 text-black dark:text-white px-4 py-2 rounded"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        onClick={() => {
+                          if (
+                            !goalName ||
+                            targetAmount === "" ||
+                            currentAmountSaved === "" ||
+                            !targetDate
+                          )
+                            return;
+                          console.log({
+                            goalName,
+                            targetDate,
+                            targetAmount,
+                            currentAmountSaved,
+                          });
+                          setShowEditSavingsModal(false);
+                          setGoalName("");
+                          setTargetDate("");
+                          setTargetAmount("");
+                          setCurrentAmountSaved("");
+                        }}
+                        className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
+                      >
+                        Add Goal
+                      </button>
+                    </div>
+
+                    <button
+                      onClick={() => setShowEditSavingsModal(false)}
                       className="absolute top-3 right-3 text-gray-400 hover:text-white"
                     >
                       ✕
@@ -776,6 +1096,7 @@ export default function UserSettingsModal({ onClose }: Props) {
             </>
           )}
 
+          {/* Export Tab */}
           {activeTab === "export" && (
             <div className="space-y-6">
               <h3 className="text-lg font-bold">Export Your Data</h3>
