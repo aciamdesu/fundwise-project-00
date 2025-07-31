@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { X } from "lucide-react";
+import { useTransactions } from "../components/TransactionContext";
 
 type Props = {
   onClose: () => void;
@@ -14,6 +15,8 @@ export default function addtransactionmodal({ onClose }: Props) {
   const [category, setCategory] = useState("Other");
   const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
 
+  const { addTransaction } = useTransactions();
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -25,7 +28,7 @@ export default function addtransactionmodal({ onClose }: Props) {
       date,
     };
 
-    console.log("Transaction submitted:", newTransaction);
+    addTransaction(newTransaction);
 
     onClose();
   };

@@ -8,6 +8,7 @@ import AddTransactionModal from "./components/AddTransactionModal";
 import FinancialOverview from "./components/FinancialOverviewChart";
 import BudgetProgress from "./components/BudgetProgress";
 import SavingsGoals from "./components/SavingsGoals";
+import TransactionList from "./components/TransactionList";
 
 export default function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -45,7 +46,7 @@ export default function Home() {
               className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center font-medium"
               onClick={() => setSettingsOpen(true)}
             >
-              J
+              S
             </button>
           </div>
 
@@ -81,11 +82,13 @@ export default function Home() {
 
             <div className="flex items-center space-x-4">
               <div className="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center">
-                J
+                S
               </div>
               <div>
-                <div className="font-semibold">John Doe</div>
-                <div className="text-sm text-gray-400">john.doe@gmail.com</div>
+                <div className="font-semibold">Shalom Jamaica Ave</div>
+                <div className="text-sm text-gray-400">
+                  shalomjamaicave@gmail.com
+                </div>
               </div>
             </div>
 
@@ -145,13 +148,13 @@ export default function Home() {
           <div className="bg-slate-800 text-gray-400 p-6 rounded-xl">
             <div className="text-lg md:text-xl font-medium">Total Income</div>
             <div className="text-green-400 text-2xl md:text-2xl sm:text-2xl font-bold mt-2">
-              $0.00
+              $56.00
             </div>
           </div>
           <div className="bg-slate-800 text-gray-400 p-6 rounded-xl">
             <div className="text-lg md:text-xl font-medium">Total Expenses</div>
             <div className="text-red-400 text-2xl md:text-2xl sm:text-2xl font-bold mt-2">
-              $0.00
+              $10.00
             </div>
           </div>
           <div className="bg-slate-800 text-gray-400 p-6 rounded-xl">
@@ -159,7 +162,7 @@ export default function Home() {
               Current Balance
             </div>
             <div className="text-blue-400 text-2xl md:text-2xl sm:text-2xl font-bold mt-2">
-              $0.00
+              $123.10
             </div>
           </div>
         </div>

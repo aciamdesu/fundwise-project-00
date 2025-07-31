@@ -1,70 +1,66 @@
 "use client";
 
-import { useUserSettings } from "../components/UserSettingsContext";
-import { Switch } from "@headlessui/react";
 import { Plus } from "lucide-react";
+import { useState } from "react";
+import { Switch } from "@headlessui/react";
+
+type RecurringItem = {
+  id: number;
+  name: string;
+  amount: number;
+  enabled: boolean;
+};
+
+const mockRecurringItems: RecurringItem[] = [
+  { id: 1, name: "Netflix", amount: 549, enabled: true },
+  { id: 2, name: "Spotify", amount: 129, enabled: false },
+];
 
 export default function RecurringTab() {
-  const { showAddRecurringModal, setShowAddRecurringModal } = useUserSettings();
-  const recurringItems = [
-    {
-      id: 1,
-      description: "Spotify",
-      amount: 149,
-      category: "Entertainment",
-      type: "expense",
-      frequency: "monthly",
-      startDate: "2025-07-01",
-      active: true,
-    },
-    {
-      id: 2,
-      description: "Salary",
-      amount: 50000,
-      category: "Income",
-      type: "income",
-      frequency: "monthly",
-      startDate: "2025-07-01",
-      active: true,
-    },
-  ];
+  const [items, setItems] = useState(mockRecurringItems);
+
+  const toggleItem = (id: number) => {
+    setItems((prev) =>
+      prev.map((item) =>
+        item.id === id ? { ...item, enabled: !item.enabled } : item
+      )
+    );
+  };
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <h2 className="text-lg font-semibold">Recurring Items</h2>
+    <div className="p-4 space-y-4">
+      <div className="flex justify-between items-center">
+        <h2 className="text-lg font-semibold">Recurring Payments</h2>
         <button
-          onClick={() => setShowAddRecurringModal(true)}
-          className="flex items-center gap-1 rounded-lg bg-primary px-3 py-1.5 text-sm font-medium text-white hover:bg-primary/90"
+          className="flex items-center gap-1 bg-primary text-white px-3 py-1.5 rounded-md text-sm"
+          // TODO: Add modal opening logic later
+          onClick={() => alert("Add Recurring Modal Coming Soon")}
         >
-          <Plus className="h-4 w-4" />
+          <Plus className="w-4 h-4" />
           Add Recurring
         </button>
       </div>
 
-      {recurringItems.map((item) => (
+      {items.map((item) => (
         <div
           key={item.id}
-          className="flex items-center justify-between rounded-lg border p-4 shadow-sm"
+          className="flex justify-between items-center bg-muted p-3 rounded-md"
         >
           <div>
-            <p className="font-medium">{item.description}</p>
-            <p className="text-sm text-muted-foreground">
-              {item.category} • {item.type} • ₱{item.amount.toLocaleString()} •{" "}
-              {item.frequency}
-            </p>
+            <p className="font-medium">{item.name}</p>
+            <p className="text-sm text-gray-500">₱{item.amount}</p>
           </div>
           <Switch
-            checked={item.active}
-            onChange={() => {}}
+            checked={item.enabled}
+            onChange={() => toggleItem(item.id)}
             className={`${
-              item.active ? "bg-green-500" : "bg-gray-300"
-            } relative inline-flex h-6 w-11 items-center rounded-full transition`}
+              item.enabled ? "bg-green-500" : "bg-gray-300"
+            } relative inline-flex h-[22px] w-[44px] shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out`}
           >
             <span
               className={`${
-                item.active ? "translate-x-6" : "translate-x-1"
-              } inline-block h-4 w-4 transform rounded-full bg-white transition`}
+                item.enabled ? "translate-x-5" : "translate-x-0"
+              } pointer-events-none inline-block h-[18px] w-[18px] transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out`}
             />
           </Switch>
         </div>

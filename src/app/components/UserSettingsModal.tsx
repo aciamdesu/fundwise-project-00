@@ -6,6 +6,8 @@ import { useUserSettings } from "./UserSettingsContext";
 import AddBudgetModal from "../modals/AddBudgetModal";
 import AddRecurringModal from "../modals/AddRecurringModal";
 import BudgetLimitsTab from "../settings/BudgetLimitsTab";
+import RecurringTab from "../settings/RecurringTab";
+
 import { act } from "react";
 
 type Props = {
@@ -149,11 +151,13 @@ export default function UserSettingsModal({ onClose }: Props) {
 
           <div className="mt-10 pt-4 border-t border-slate-600 flex items-center gap-3">
             <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center text-white font-medium">
-              J
+              S
             </div>
             <div>
-              <div className="text-white font-medium">John Doe</div>
-              <div className="text-sm text-gray-400">john.doe@gmail.com</div>
+              <div className="text-white font-medium">Shalom Jamaica Ave</div>
+              <div className="text-sm text-gray-400">
+                shalomajamaicave@gmail.com
+              </div>
             </div>
           </div>
         </aside>
@@ -171,7 +175,7 @@ export default function UserSettingsModal({ onClose }: Props) {
                   <label className="block text-sm mb-1">Full Name</label>
                   <input
                     type="text"
-                    defaultValue="John Doe"
+                    defaultValue="Input your full name"
                     className="w-full px-3 py-2 rounded bg-slate-700 border border-slate-600 text-white"
                   />
                 </div>
@@ -179,7 +183,7 @@ export default function UserSettingsModal({ onClose }: Props) {
                   <label className="block text-sm mb-1">Email Address</label>
                   <input
                     type="email"
-                    defaultValue="john.doe@gmail.com"
+                    defaultValue="Input your email"
                     className="w-full px-3 py-2 rounded bg-slate-700 border border-slate-600 text-white"
                   />
                 </div>
