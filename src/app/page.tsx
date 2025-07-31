@@ -2,12 +2,12 @@
 
 import { useEffect, useState } from "react";
 import { Search, SlidersHorizontal } from "lucide-react";
-import { UserSettingsProvider } from "./components/usersettingscontext";
-import UserSettingsModal from "./components/usersettingsmodal";
-import AddTransactionModal from "./components/addtransactionmodal";
-import FinancialOverview from "./components/financialoverview";
-import BudgetProgress from "./components/budgetprogress";
-import SavingsGoals from "./components/savingsgoals";
+import { UserSettingsProvider } from "./components/UserSettingsContext";
+import UserSettingsModal from "./components/UserSettingsModal";
+import AddTransactionModal from "./components/AddTransactionModal";
+import FinancialOverview from "./components/FinancialOverviewChart";
+import BudgetProgress from "./components/BudgetProgress";
+import SavingsGoals from "./components/SavingsGoals";
 
 export default function Home() {
   const [menuOpen, setMenuOpen] = useState(false);

@@ -2,9 +2,11 @@
 
 import { useState } from "react";
 import { Pencil, Trash2, X } from "lucide-react";
-import { useUserSettings } from "./usersettingscontext";
-import AddBudgetModal from "./AddBudgetModal";
-
+import { useUserSettings } from "./UserSettingsContext";
+import AddBudgetModal from "../modals/AddBudgetModal";
+import AddRecurringModal from "../modals/AddRecurringModal";
+import BudgetLimitsTab from "../settings/BudgetLimitsTab";
+import { act } from "react";
 
 type Props = {
   onClose: () => void;
@@ -20,12 +22,10 @@ type Account = {
   id: string;
   name: string;
   balance: number;
-  type: string; 
+  type: string;
 };
 
-
-
-export default function usersettingsmodal({ onClose }: Props) {
+export default function UserSettingsModal({ onClose }: Props) {
   const {
     showAddBudgetModal,
     setShowAddBudgetModal,
@@ -44,7 +44,7 @@ export default function usersettingsmodal({ onClose }: Props) {
     showEditSavingsModal,
     setShowEditSavingsModal,
   } = useUserSettings();
-  
+
   const { activeTab, setActiveTab } = useUserSettings();
   const [editItem, setEditItem] = useState<BudgetItem | null>(null);
 
@@ -70,9 +70,7 @@ export default function usersettingsmodal({ onClose }: Props) {
   const [currentAmountSaved, setCurrentAmountSaved] = useState<number | "">("");
 
   const { budgetLimits, setBudgetLimits } = useUserSettings();
-  const [budgetLimits, setBudgetLimits] = useState<BudgetItem[]>([
-    { name: "Food", used: 50, limit: 500 },
-  ]);
+
   const handleDelete = (name: string) => {
     setBudgetLimits((prev) => prev.filter((item) => item.name !== name));
   };
@@ -89,6 +87,28 @@ export default function usersettingsmodal({ onClose }: Props) {
     setAccountBalance(account.balance);
     setShowEditAccountModal(true);
   };
+  const recurringItems = [
+    {
+      id: 1,
+      description: "Spotify",
+      type: "expense",
+      frequency: "monthly",
+      active: true,
+      amount: 149,
+      category: "entertainment",
+      startDate: "2025-07-01",
+    },
+    {
+      id: 2,
+      description: "Salary",
+      type: "income",
+      frequency: "monthly",
+      active: true,
+      amount: 50000,
+      category: "income",
+      startDate: "2025-07-01",
+    },
+  ];
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
@@ -133,7 +153,7 @@ export default function usersettingsmodal({ onClose }: Props) {
             </div>
             <div>
               <div className="text-white font-medium">John Doe</div>
-              <div className="text-sm text-gray-400">john.doe@example.com</div>
+              <div className="text-sm text-gray-400">john.doe@gmail.com</div>
             </div>
           </div>
         </aside>
@@ -159,7 +179,7 @@ export default function usersettingsmodal({ onClose }: Props) {
                   <label className="block text-sm mb-1">Email Address</label>
                   <input
                     type="email"
-                    defaultValue="john.doe@example.com"
+                    defaultValue="john.doe@gmail.com"
                     className="w-full px-3 py-2 rounded bg-slate-700 border border-slate-600 text-white"
                   />
                 </div>
@@ -176,7 +196,7 @@ export default function usersettingsmodal({ onClose }: Props) {
                       defaultChecked
                       className="accent-blue-500"
                     />
-                    <label>Dark Mode</label>
+                    <label>Dakr Mode</label>
                   </div>
                   <label className="text-sm mb-1 block">
                     Preferred Currency
@@ -206,260 +226,8 @@ export default function usersettingsmodal({ onClose }: Props) {
             </>
           )}
 
-{activeTab === "budget" && <BudgetLimitsTab />}
-
-
-              {/* Add Recurring Modal */}
-              {showAddRecurringModal && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-                  <div className="bg-white dark:bg-slate-800 text-black dark:text-white p-6 rounded-xl w-full max-w-3xl shadow-lg relative">
-                    <h3 className="text-lg font-bold mb-6">
-                      Add Recurring Transaction
-                    </h3>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      {/* Left Column */}
-                      <div className="space-y-4">
-                        <input
-                          type="text"
-                          placeholder="Description"
-                          value={description}
-                          onChange={(e) => setDescription(e.target.value)}
-                          className="w-full px-3 py-2 rounded bg-slate-200 dark:bg-slate-700"
-                        />
-
-                        <select
-                          value={type}
-                          onChange={(e) => setType(e.target.value)}
-                          className="w-full px-3 py-2 rounded bg-slate-200 dark:bg-slate-700"
-                        >
-                          <option value="income">Income</option>
-                          <option value="expense">Expense</option>
-                        </select>
-
-                        <select
-                          value={frequency}
-                          onChange={(e) => setFrequency(e.target.value)}
-                          className="w-full px-3 py-2 rounded bg-slate-200 dark:bg-slate-700"
-                        >
-                          <option value="daily">Daily</option>
-                          <option value="weekly">Weekly</option>
-                          <option value="monthly">Monthly</option>
-                          <option value="yearly">Yearly</option>
-                        </select>
-
-                        <label className="flex items-center gap-2 text-sm">
-                          <input
-                            type="checkbox"
-                            checked={active}
-                            onChange={(e) => setActive(e.target.checked)}
-                          />
-                          Active
-                        </label>
-                      </div>
-
-                      {/* Right Column */}
-                      <div className="space-y-4">
-                        <input
-                          type="number"
-                          placeholder="Amount"
-                          value={amount}
-                          onChange={(e) => setAmount(Number(e.target.value))}
-                          className="w-full px-3 py-2 rounded bg-slate-200 dark:bg-slate-700"
-                        />
-
-                        <select
-                          value={category}
-                          onChange={(e) => setCategory(e.target.value)}
-                          className="w-full px-3 py-2 rounded bg-slate-200 dark:bg-slate-700"
-                        >
-                          <option value="income">Income</option>
-                          <option value="housing">Housing</option>
-                          <option value="food">Food</option>
-                          <option value="transportation">Transportation</option>
-                          <option value="entertainment">Entertainment</option>
-                        </select>
-
-                        <input
-                          type="date"
-                          value={startDate}
-                          onChange={(e) => setStartDate(e.target.value)}
-                          className="w-full px-3 py-2 rounded bg-slate-200 dark:bg-slate-700"
-                        />
-                      </div>
-                    </div>
-
-                    <div className="flex justify-end gap-2 mt-6">
-                      <button
-                        onClick={() => setShowAddRecurringModal(false)}
-                        className="bg-gray-300 dark:bg-gray-700 text-black dark:text-white px-4 py-2 rounded"
-                      >
-                        Cancel
-                      </button>
-                      <button
-                        onClick={() => {
-                          if (!description || amount === "" || !startDate)
-                            return;
-                          console.log({
-                            description,
-                            type,
-                            frequency,
-                            active,
-                            amount,
-                            newCategory,
-                            startDate,
-                          });
-                          setShowAddRecurringModal(false);
-                          setDescription("");
-                          setType("expense");
-                          setFrequency("monthly");
-                          setActive(true);
-                          setAmount("");
-                          setNewCategory("income");
-                          setStartDate("");
-                        }}
-                        className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
-                      >
-                        Add Recurring
-                      </button>
-                    </div>
-
-                    <button
-                      onClick={() => setShowAddRecurringModal(false)}
-                      className="absolute top-3 right-3 text-gray-400 hover:text-white"
-                    >
-                      ✕
-                    </button>
-                  </div>
-                </div>
-              )}
-
-              {/* Edit Recurring Modal */}
-              {showEditRecurringModal && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-                  <div className="bg-white dark:bg-slate-800 text-black dark:text-white p-6 rounded-xl w-full max-w-3xl shadow-lg relative">
-                    <h3 className="text-lg font-bold mb-6">
-                      Edit Recurring Transaction
-                    </h3>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      {/* Left Column */}
-                      <div className="space-y-4">
-                        <input
-                          type="text"
-                          placeholder="Description"
-                          value={description}
-                          onChange={(e) => setDescription(e.target.value)}
-                          className="w-full px-3 py-2 rounded bg-slate-200 dark:bg-slate-700"
-                        />
-
-                        <select
-                          value={type}
-                          onChange={(e) => setType(e.target.value)}
-                          className="w-full px-3 py-2 rounded bg-slate-200 dark:bg-slate-700"
-                        >
-                          <option value="income">Income</option>
-                          <option value="expense">Expense</option>
-                        </select>
-
-                        <select
-                          value={frequency}
-                          onChange={(e) => setFrequency(e.target.value)}
-                          className="w-full px-3 py-2 rounded bg-slate-200 dark:bg-slate-700"
-                        >
-                          <option value="daily">Daily</option>
-                          <option value="weekly">Weekly</option>
-                          <option value="monthly">Monthly</option>
-                          <option value="yearly">Yearly</option>
-                        </select>
-
-                        <label className="flex items-center gap-2 text-sm">
-                          <input
-                            type="checkbox"
-                            checked={true}
-                            onChange={(e) => setActive(e.target.checked)}
-                          />
-                          Active
-                        </label>
-                      </div>
-
-                      {/* Right Column */}
-                      <div className="space-y-4">
-                        <input
-                          type="number"
-                          placeholder="Amount"
-                          value={amount}
-                          onChange={(e) => setAmount(Number(e.target.value))}
-                          className="w-full px-3 py-2 rounded bg-slate-200 dark:bg-slate-700"
-                        />
-
-                        <select
-                          value={newCategory}
-                          onChange={(e) => setNewCategory(e.target.value)}
-                          className="w-full px-3 py-2 rounded bg-slate-200 dark:bg-slate-700"
-                        >
-                          <option value="income">Income</option>
-                          <option value="housing">Housing</option>
-                          <option value="food">Food</option>
-                          <option value="transportation">Transportation</option>
-                          <option value="entertainment">Entertainment</option>
-                        </select>
-
-                        <input
-                          type="date"
-                          value={startDate}
-                          onChange={(e) => setStartDate(e.target.value)}
-                          className="w-full px-3 py-2 rounded bg-slate-200 dark:bg-slate-700"
-                        />
-                      </div>
-                    </div>
-
-                    <div className="flex justify-end gap-2 mt-6">
-                      <button
-                        onClick={() => setShowEditRecurringModal(false)}
-                        className="bg-gray-300 dark:bg-gray-700 text-black dark:text-white px-4 py-2 rounded"
-                      >
-                        Cancel
-                      </button>
-                      <button
-                        onClick={() => {
-                          if (!description || amount === "" || !startDate)
-                            return;
-                          console.log({
-                            description,
-                            type,
-                            frequency,
-                            active,
-                            amount,
-                            newCategory,
-                            startDate,
-                          });
-                          setShowEditRecurringModal(false);
-                          setDescription("");
-                          setType("expense");
-                          setFrequency("monthly");
-                          setActive(true);
-                          setAmount("");
-                          setNewCategory("income");
-                          setStartDate("");
-                        }}
-                        className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
-                      >
-                        Update Recurring Modal
-                      </button>
-                    </div>
-
-                    <button
-                      onClick={() => setShowEditRecurringModal(false)}
-                      className="absolute top-3 right-3 text-gray-400 hover:text-white"
-                    >
-                      ✕
-                    </button>
-                  </div>
-                </div>
-              )}
-            </>
-          )}
+          {activeTab === "budget" && <BudgetLimitsTab />}
+          {activeTab === "recurring" && <RecurringTab />}
 
           {/* Account Tab */}
           {activeTab === "accounts" && (

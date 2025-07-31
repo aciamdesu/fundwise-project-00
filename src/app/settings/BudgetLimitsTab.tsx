@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import AddBudgetModal from "./modals/AddBudgetModal";
+import AddBudgetModal from "../modals/AddBudgetModal";
 
 type BudgetItem = {
   name: string;

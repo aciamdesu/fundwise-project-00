@@ -1,6 +1,6 @@
 "use client";
 
-import { useUserSettings } from "./usersettingscontext";
+import { useUserSettings } from "../components/UserSettingsContext";
 
 type BudgetItem = {
   name: string;
