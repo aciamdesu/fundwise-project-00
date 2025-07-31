@@ -1,67 +1,63 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState } from "react";
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode,
+} from "react";
 
 type Transaction = {
-  id: string;
-  type: "income" | "expense";
-  description: string;
+  id: number;
+  name: string;
   amount: number;
-  category: string;
-  date: string;
 };
 
 type TransactionContextType = {
   transactions: Transaction[];
-  addTransaction: (transaction: Omit<Transaction, "id">) => Promise<void>;
-  fetchTransactions: () => Promise<void>;
+  addTransaction: (transaction: Transaction) => void;
+  fetchTransactions: () => void;
 };
 
 const TransactionContext = createContext<TransactionContextType | undefined>(
   undefined
 );
 
-export const useTransactions = () => {
+export function useTransactionContext() {
   const context = useContext(TransactionContext);
-  if (!context)
+  if (!context) {
     throw new Error(
-      "useTransactions must be used within a TransactionProvider"
+      "useTransactionContext must be used within a TransactionProvider"
     );
+  }
   return context;
+}
+
+type Props = {
+  children: ReactNode;
 };
 
-export function TransactionProvider({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export function TransactionProvider({ children }: Props) {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
 
-  // Fetch transactions
   const fetchTransactions = async () => {
     try {
       const res = await fetch("/api/transactions");
+
+      if (!res.ok) {
+        throw new Error("Failed to fetch transactions");
+      }
+
       const data = await res.json();
       setTransactions(data);
     } catch (err) {
-      console.error("Failed to fetch transactions", err);
+      console.error("Fetch error:", err);
     }
   };
 
-  // Add transaction
-  const addTransaction = async (transaction: Omit<Transaction, "id">) => {
-    try {
-      const res = await fetch("/api/transactions", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(transaction),
-      });
-
-      const newTransaction = await res.json();
-      setTransactions((prev) => [...prev, newTransaction]);
-    } catch (err) {
-      console.error("Failed to add transaction", err);
-    }
+  const addTransaction = (transaction: Transaction) => {
+    setTransactions((prev) => [...prev, transaction]);
   };
 
   useEffect(() => {
